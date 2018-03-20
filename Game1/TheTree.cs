@@ -50,5 +50,10 @@ namespace Game1
         {
             return this.GetBoundingBox().Intersects(collider.GetBoundingBox());
         }
+
+        public ColliderType GetColliderType()
+        {
+           return ColliderType.tree;
+        }
     }
 }

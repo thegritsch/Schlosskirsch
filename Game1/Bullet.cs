@@ -83,5 +83,10 @@ namespace Game1
         {
             return new Rectangle((int)position.X, (int)position.Y, width, height);
         }
+
+        public ColliderType GetColliderType()
+        {
+            return ColliderType.playerBullet;
+        }
     }
 }
