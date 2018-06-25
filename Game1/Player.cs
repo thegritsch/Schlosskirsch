@@ -5,7 +5,7 @@ using GameStateManagement;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using TileEngine;
+using Schlosskirsch;
 using Microsoft.Xna.Framework.Content;
 
 namespace SuperG
@@ -48,6 +48,8 @@ namespace SuperG
         private Vector2 v2Center;
         private float rotation;
         private const float MOVEMENT_SPEED = 10.0f;
+
+        public Vector2 Center { get { return this.v2Center; } }
 
         public bool dealdamage(int val)
         {
@@ -208,7 +210,7 @@ namespace SuperG
                
             }
             currentMovementSpeed = MathHelper.Lerp(0.0f, MOVEMENT_SPEED, deltaMovement);
-            
+            moveDir.Normalize();
             moveDir = moveDir * currentMovementSpeed;
 
             if (moveDir.Length() > 0)

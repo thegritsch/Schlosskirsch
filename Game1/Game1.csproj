@@ -60,10 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DataTypes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeonBit.UI.3.0.2.2\lib\geonbitui\DataTypes.dll</HintPath>
+      <HintPath>..\packages\GeonBit.UI.3.1.0.2\lib\geonbitui\DataTypes.dll</HintPath>
     </Reference>
     <Reference Include="GeonBit.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeonBit.UI.3.0.2.2\lib\geonbitui\GeonBit.UI.dll</HintPath>
+      <HintPath>..\packages\GeonBit.UI.3.1.0.2\lib\geonbitui\GeonBit.UI.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>

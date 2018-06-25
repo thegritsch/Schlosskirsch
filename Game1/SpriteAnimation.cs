@@ -7,7 +7,7 @@ using Microsoft.Xna.Framework;
 
 
 
-namespace TileEngine
+namespace Schlosskirsch
 {
     public class SpriteAnimation
     {

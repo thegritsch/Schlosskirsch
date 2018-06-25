@@ -4,27 +4,26 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 
-namespace TileEngine
+namespace Schlosskirsch
 {
     /// <summary>
     /// abstract class for game objects. All other objects should inherit from this
-    /// and implement the Interact() virtual method.
+    /// 
     /// </summary>
     public abstract class GameObject
     {
         private Rectangle boundingBox;
-        private byte type;
+        
         private string name;
+
+        private Vector2 position;
 
         public Rectangle BoundingBox
         {
             get { return boundingBox; }
         }
 
-        public byte Type
-        {
-            get { return type; }
-        }
+        public Vector2 Position { get { return this.position; } }
 
         public string Name
         {
@@ -33,15 +32,13 @@ namespace TileEngine
 
         
 
-        public GameObject(string name, byte type, Rectangle bounds)
+        public GameObject(string Name, Rectangle Bounds, Vector2 Position)
         {
-            this.name = name;
-            this.type = type;
-            this.boundingBox = bounds;
+            this.name = Name;
+            this.position = Position;
+            this.boundingBox = Bounds;
         }
 
-        public virtual void Interact(Object player, Object ScreenManager)
-        {
-        }
+        
     }
 }

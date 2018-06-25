@@ -10,7 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\packages\GeonBit.UI.3.0.2.2\lib\geonbitui\DataTypes.dll
+/reference:..\..\packages\GeonBit.UI.3.1.0.2\lib\geonbitui\DataTypes.dll
 
 #---------------------------------- Content ---------------------------------#
 

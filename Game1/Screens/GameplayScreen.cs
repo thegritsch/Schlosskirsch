@@ -21,7 +21,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using SuperG;
-using TileEngine;
+using Schlosskirsch;
 
 #endregion Using Statements
 
@@ -204,7 +204,7 @@ namespace GameStateManagement
                         {
                             if (bullets[i].IsDestroyed)
                             {
-                                bullets[i].Position = player.Position;
+                                bullets[i].Position = new Vector2(player.Position.X - bullets[i].GetWidth/2, player.Position.Y - bullets[i].GetHeight/2);
                                 bullets[i].IsDestroyed = false;
                                 
                                 
