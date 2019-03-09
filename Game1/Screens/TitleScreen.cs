@@ -17,9 +17,12 @@ namespace Game1
         SpriteBatch spriteBatch;
         Texture2D titleBackground;
         Panel panel;
+        private Rectangle viewPortRectangle;
+        private Rectangle textureRectangle;
 
         public TitleScreen()
         {
+            viewPortRectangle = new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight);
             
         }
 
@@ -27,6 +30,7 @@ namespace Game1
         {
             spriteBatch = ScreenManager.SpriteBatch;
             titleBackground = content.Load <Texture2D> ("Custom Content/Titlescreen");
+            textureRectangle = new Rectangle(titleBackground.Width - Game1.ScreenWidth, titleBackground.Height - Game1.ScreenHeight, Game1.ScreenWidth, Game1.ScreenHeight);
             // create a panel and position in center of screen
             panel = new Panel(new Vector2(400, 200), PanelSkin.None, Anchor.Center);
             UserInterface.Active.AddEntity(panel);
@@ -57,7 +61,7 @@ namespace Game1
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(titleBackground, Vector2.Zero, Color.White);
+            spriteBatch.Draw(titleBackground, viewPortRectangle, textureRectangle, Color.White);
             spriteBatch.End();
 
             UserInterface.Active.Draw(spriteBatch);

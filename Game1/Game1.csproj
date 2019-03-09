@@ -43,12 +43,12 @@
   <ItemGroup>
     <Compile Include="Bullet.cs" />
     <Compile Include="Camera.cs" />
+    <Compile Include="Enemy.cs" />
     <Compile Include="FrameAnimation.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="GameObject.cs" />
     <Compile Include="Screens\GameplayScreen.cs" />
     <Compile Include="Screens\GameScreen.cs" />
-    <Compile Include="ICollider.cs" />
     <Compile Include="InputState.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
@@ -60,10 +60,10 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="DataTypes, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeonBit.UI.3.1.0.2\lib\geonbitui\DataTypes.dll</HintPath>
+      <HintPath>..\packages\GeonBit.UI.3.3.0\lib\geonbitui\DataTypes.dll</HintPath>
     </Reference>
     <Reference Include="GeonBit.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeonBit.UI.3.1.0.2\lib\geonbitui\GeonBit.UI.dll</HintPath>
+      <HintPath>..\packages\GeonBit.UI.3.3.0\lib\geonbitui\GeonBit.UI.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\Windows\MonoGame.Framework.dll</HintPath>
@@ -72,6 +72,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\CustomContent\Bullet.png" />
+    <Content Include="Content\CustomContent\Field.png" />
     <Content Include="Content\GeonBit.UI\themes\editor\effects\disabled.fx" />
     <Content Include="Content\GeonBit.UI\themes\editor\effects\silhouette.fx" />
     <Content Include="Content\GeonBit.UI\themes\editor\styles\Button-Default.xml" />
@@ -649,6 +651,9 @@
     <Content Include="Content\GeonBit.UI\themes\lowres\textures\slider_fancy_md.xml" />
     <Content Include="Content\GeonBit.UI\themes\lowres\textures\white_texture.png" />
     <Content Include="Content\GeonBit.UI\themes\lowres\ThemeData.xml" />
+    <Content Include="Content\CustomContent\smiley_sprite.png" />
+    <Content Include="Content\CustomContent\TheTree.png" />
+    <Content Include="Content\CustomContent\Titlescreen.png" />
     <Content Include="Icon.ico" />
   </ItemGroup>
   <ItemGroup>

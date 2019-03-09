@@ -10,7 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\packages\GeonBit.UI.3.1.0.2\lib\geonbitui\DataTypes.dll
+/reference:..\..\packages\GeonBit.UI.3.3.0\lib\geonbitui\DataTypes.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -26,7 +26,7 @@
 /processorParam:TextureFormat=Color
 /build:background.jpg
 
-#begin Custom Content/Bullet.png
+#begin CustomContent/Bullet.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -36,9 +36,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Custom Content/Bullet.png
+/build:CustomContent/Bullet.png
 
-#begin Custom Content/Field.png
+#begin CustomContent/Field.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -48,9 +48,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Custom Content/Field.png
+/build:CustomContent/Field.png
 
-#begin Custom Content/smiley_sprite.png
+#begin CustomContent/smiley_sprite.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -60,9 +60,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Custom Content/smiley_sprite.png
+/build:CustomContent/smiley_sprite.png
 
-#begin Custom Content/TheTree.png
+#begin CustomContent/TheTree.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -72,9 +72,9 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Custom Content/TheTree.png
+/build:CustomContent/TheTree.png
 
-#begin Custom Content/Titlescreen.png
+#begin CustomContent/Titlescreen.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -84,7 +84,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Custom Content/Titlescreen.png
+/build:CustomContent/Titlescreen.png
 
 #begin GeonBit.UI\themes\editor\effects\disabled.fx
 /importer:EffectImporter

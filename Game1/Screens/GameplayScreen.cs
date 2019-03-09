@@ -36,6 +36,8 @@ namespace GameStateManagement
     {
         const uint FIRE_INTERVAL = 200;
         const short BULLET_AMOUNT = 10;
+        const int treePosX = 500;
+        const int treePosY = 400;
         #region Fields
 
         private ContentManager content;
@@ -57,10 +59,12 @@ namespace GameStateManagement
         private Texture2D lifeBarTexture;
         private TheTree theTree;
         private bool acceptingInput;
-        private List<ICollider> colliders;
+        private List<GameObject> gameObjects;
         private Bullet[] bullets;
         private ProgressBar playerHealthBar;
         private ProgressBar treeHealthBar;
+        private Rectangle viewPortRectangle;
+        private Rectangle textureRectangle;
         #endregion Fields
 
         #region Initialization
@@ -73,7 +77,7 @@ namespace GameStateManagement
             TransitionOnTime = TimeSpan.FromSeconds(1.5);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             ControllingPlayer = PlayerIndex.One;
-            colliders = new List<ICollider>();
+            gameObjects = new List<GameObject>();
             bullets = new Bullet[BULLET_AMOUNT];
             timeSinceLastFire = FIRE_INTERVAL;
             playerHealthBar = new ProgressBar(0, 10, new Vector2(200.0f, 20.0f), Anchor.TopLeft);
@@ -82,7 +86,7 @@ namespace GameStateManagement
             treeHealthBar = new ProgressBar(0, 10, new Vector2(200.0f, 20.0f), Anchor.TopRight);
             treeHealthBar.Locked = true;
             treeHealthBar.Value = 10;
-
+            viewPortRectangle = new Rectangle(0, 0, Game1.Game1.ScreenWidth, Game1.Game1.ScreenHeight);
             UserInterface.Active.AddEntity(playerHealthBar);
             UserInterface.Active.AddEntity(treeHealthBar);
         }
@@ -102,9 +106,10 @@ namespace GameStateManagement
             player = new Player(playerTexture, 64, 64);
             player.loadPlayerContent(Content);
             player.controllingPlayer = ControllingPlayer;
-            theTree = new TheTree(200, 200, new Point(600 - 128, 360 -128));
+            player.Position = new Point(900, 500);
+            theTree = new TheTree(256, 256, new Point(treePosX,treePosY));
             theTree.LoadContent(Content);
-            colliders.Add(theTree);
+            gameObjects.Add(theTree);
 
             if (camera == null)
             {
@@ -122,11 +127,12 @@ namespace GameStateManagement
             lifeBarTexture.SetData<Color>(new Color[] { Color.White });
             acceptingInput = true;
             background = Content.Load<Texture2D>("Custom Content/Field");
+            textureRectangle = new Rectangle(0, 0, Game1.Game1.ScreenWidth, Game1.Game1.ScreenHeight);
             Texture2D bulletTexture = Content.Load<Texture2D>("Custom Content/Bullet");
 
             for (int i = 0; i < BULLET_AMOUNT; i++)
             {
-                bullets[i] = new Bullet(bulletTexture, Vector2.Zero, 32, 32);
+                bullets[i] = new Bullet(bulletTexture, Point.Zero, 32, 32);
             }
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
@@ -193,7 +199,7 @@ namespace GameStateManagement
                 
 
                 MouseState mouseState = Mouse.GetState();
-                Vector2 direction = mouseState.Position.ToVector2() - player.Position;
+                Vector2 direction = (mouseState.Position - player.Position).ToVector2();
                 player.Rotation = (float)Math.Atan2(direction.Y, direction.X);
 
                 if (mouseState.LeftButton == ButtonState.Pressed)
@@ -204,7 +210,7 @@ namespace GameStateManagement
                         {
                             if (bullets[i].IsDestroyed)
                             {
-                                bullets[i].Position = new Vector2(player.Position.X - bullets[i].GetWidth/2, player.Position.Y - bullets[i].GetHeight/2);
+                                bullets[i].Position = new Point(player.Position.X - bullets[i].GetWidth/2, player.Position.Y - bullets[i].GetHeight/2);
                                 bullets[i].IsDestroyed = false;
                                 
                                 
@@ -272,7 +278,7 @@ namespace GameStateManagement
             else if (acceptingInput)
             {
                 
-                  player.move(input, keyboardState, camera, colliders);
+                  player.Move(input, keyboardState, camera, gameObjects);
                 
             }
         }
@@ -296,7 +302,7 @@ namespace GameStateManagement
 
             spriteBatch.Draw(lifeBarTexture, lifeBarRectangle, Color.Green);
             //spriteBatch.DrawString(gameFont, player.getHealth + "/100", enemyPosition, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.0f);
-            spriteBatch.Draw(background, Vector2.Zero, Color.White);
+            spriteBatch.Draw(background, viewPortRectangle, null, Color.White);
             
             player.Draw(spriteBatch, 0, 0, camera);
             theTree.Draw(spriteBatch);

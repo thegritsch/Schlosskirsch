@@ -15,13 +15,16 @@ namespace Game1
         SpriteBatch spriteBatch;
         ScreenManager screenManager;
 
+        public const int ScreenWidth = 1280;
+        public const int ScreenHeight = 1024;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             
             
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = ScreenWidth;
+            graphics.PreferredBackBufferHeight = ScreenHeight;
             Content.RootDirectory = "Content";
         }
 

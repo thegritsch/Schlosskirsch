@@ -12,31 +12,25 @@ namespace Schlosskirsch
     /// </summary>
     public abstract class GameObject
     {
-        private Rectangle boundingBox;
-        
-        private string name;
+        protected Point position;
 
-        private Vector2 position;
-
-        public Rectangle BoundingBox
-        {
-            get { return boundingBox; }
+        public Point Position {
+            get
+            { return position; }
+            set
+            { position = value; }
         }
 
-        public Vector2 Position { get { return this.position; } }
+        public string Name { get; }
 
-        public string Name
+        public abstract bool CheckCollision(GameObject collider);
+
+        public abstract Rectangle GetBoundingBox();
+
+        public GameObject(string Name, Point Position)
         {
-            get { return name; }
-        }
-
-        
-
-        public GameObject(string Name, Rectangle Bounds, Vector2 Position)
-        {
-            this.name = Name;
-            this.position = Position;
-            this.boundingBox = Bounds;
+            this.Name = Name;
+            this.Position = Position;
         }
 
         

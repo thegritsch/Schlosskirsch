@@ -8,22 +8,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game1
+namespace Schlosskirsch
 {
-    public class TheTree : ICollider
+    public class TheTree : GameObject
     {
         private int width;
         private int height;
-        private Point position;
+        
         private Texture2D treeTexture;
-        private const int xOffset = 25;
-        private const int yOffset = 30;
+        private const int xOffset = 50;
+        private const int yOffset = 60;
+        private Rectangle destinationRectangle;
+        private const int marginX = 40;
+        private const int marginY = 30;
 
-        public TheTree(int width, int height, Point position)
+        public TheTree(int width, int height, Point position) : base("TheTree", position)
         {
             this.width = width;
             this.height = height;
             this.position = position;
+            this.destinationRectangle = new Rectangle(position.X, position.Y, width, height);
         }
 
         public void LoadContent(ContentManager content)
@@ -33,7 +37,7 @@ namespace Game1
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(treeTexture, position.ToVector2(), Color.White);
+            spriteBatch.Draw(treeTexture, destinationRectangle, Color.White);
         }
 
         public void Update()
@@ -41,19 +45,16 @@ namespace Game1
 
         }
 
-        public Rectangle GetBoundingBox()
+        public override Rectangle GetBoundingBox()
         {
-            return new Rectangle(position.X + xOffset, position.Y + yOffset, width, height);
+            return new Rectangle(position.X + xOffset, position.Y + yOffset, width - marginX, height - marginY);
         }
 
-        public bool CheckCollision(ICollider collider)
+        public override bool CheckCollision(GameObject collider)
         {
             return this.GetBoundingBox().Intersects(collider.GetBoundingBox());
         }
 
-        public ColliderType GetColliderType()
-        {
-           return ColliderType.tree;
-        }
+        
     }
 }

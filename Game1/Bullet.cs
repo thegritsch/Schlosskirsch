@@ -7,12 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game1
+namespace Schlosskirsch
 {
-    public class Bullet : ICollider
+    public class Bullet : GameObject
     {
         private bool isDestroyed;
-        private Vector2 position;
+        
         private int width;
         private int height;
         private Rectangle destRectangle;
@@ -24,11 +24,7 @@ namespace Game1
             get { return bulletTexture; }
         }
 
-        public Vector2 Position
-        {
-            get { return position; }
-            set { position = value; }
-        }
+        
 
         public Vector2 SetDirection
         {
@@ -51,7 +47,7 @@ namespace Game1
             get { return height; }
         }
 
-        public Bullet(Texture2D bulletTexture, Vector2 position, int height, int width)
+        public Bullet(Texture2D bulletTexture, Point position, int height, int width):base("Bullet", position)
         {
             if (Bullet.bulletTexture == null)
                 Bullet.bulletTexture = bulletTexture;
@@ -64,9 +60,9 @@ namespace Game1
 
         public void Move( float Speed)
         {
-            position += direction * Speed;
-            destRectangle.X = (int) position.X;
-            destRectangle.Y = (int)position.Y;
+            position += (direction * Speed).ToPoint();
+            destRectangle.X = position.X;
+            destRectangle.Y = position.Y;
         }
 
         public void Draw (SpriteBatch spriteBatch)
@@ -74,19 +70,16 @@ namespace Game1
             spriteBatch.Draw(Bullet.bulletTexture, destRectangle, Color.White);
         }
 
-        public bool CheckCollision(ICollider collider)
+        public override bool CheckCollision(GameObject collider)
         {
             return GetBoundingBox().Intersects(collider.GetBoundingBox());
         }
 
-        public Rectangle GetBoundingBox()
+        public override Rectangle GetBoundingBox()
         {
             return new Rectangle((int)position.X, (int)position.Y, width, height);
         }
 
-        public ColliderType GetColliderType()
-        {
-            return ColliderType.playerBullet;
-        }
+        
     }
 }
