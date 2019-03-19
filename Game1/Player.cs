@@ -7,8 +7,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Schlosskirsch;
 using Microsoft.Xna.Framework.Content;
+using System.IO;
 
-namespace SuperG
+namespace Schlosskirsch
 {
     public enum FaceDirection
     {
@@ -102,7 +103,7 @@ namespace SuperG
 
         public void loadPlayerContent(ContentManager content)
         {
-            playerTexture = content.Load<Texture2D>("Custom Content/smiley_sprite");
+            playerTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER,"smiley_sprite"));
 
             directionNames.Add(FaceDirection.up, "North");
             directionNames.Add(FaceDirection.down, "South");

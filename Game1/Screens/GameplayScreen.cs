@@ -13,15 +13,16 @@
 
 using System;
 using System.Collections.Generic;
-using Game1;
+using Schlosskirsch;
 using GeonBit.UI;
 using GeonBit.UI.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using SuperG;
-using Schlosskirsch;
+using System.IO;
+
+
 
 #endregion Using Statements
 
@@ -65,6 +66,7 @@ namespace GameStateManagement
         private ProgressBar treeHealthBar;
         private Rectangle viewPortRectangle;
         private Rectangle textureRectangle;
+        private BulletManager<Bullet> playerBullet;
         #endregion Fields
 
         #region Initialization
@@ -86,9 +88,10 @@ namespace GameStateManagement
             treeHealthBar = new ProgressBar(0, 10, new Vector2(200.0f, 20.0f), Anchor.TopRight);
             treeHealthBar.Locked = true;
             treeHealthBar.Value = 10;
-            viewPortRectangle = new Rectangle(0, 0, Game1.Game1.ScreenWidth, Game1.Game1.ScreenHeight);
+            viewPortRectangle = new Rectangle(0, 0, Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
             UserInterface.Active.AddEntity(playerHealthBar);
             UserInterface.Active.AddEntity(treeHealthBar);
+            this.playerBullet = new BulletManager<Bullet>(Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
         }
 
         /// <summary>
@@ -126,14 +129,15 @@ namespace GameStateManagement
             lifeBarTexture = new Texture2D(ScreenManager.GraphicsDevice, 1, 1);
             lifeBarTexture.SetData<Color>(new Color[] { Color.White });
             acceptingInput = true;
-            background = Content.Load<Texture2D>("Custom Content/Field");
-            textureRectangle = new Rectangle(0, 0, Game1.Game1.ScreenWidth, Game1.Game1.ScreenHeight);
-            Texture2D bulletTexture = Content.Load<Texture2D>("Custom Content/Bullet");
+            background = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER , "Field"));
+            textureRectangle = new Rectangle(0, 0, Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
+            Texture2D bulletTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Bullet"));
 
             for (int i = 0; i < BULLET_AMOUNT; i++)
             {
                 bullets[i] = new Bullet(bulletTexture, Point.Zero, 32, 32);
             }
+            this.playerBullet.AddBullets(bullets);
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
             // it should not try to catch up.
@@ -206,20 +210,7 @@ namespace GameStateManagement
                 {
                     if (timeSinceLastFire >= FIRE_INTERVAL)
                     {
-                        for (int i = 0; i < BULLET_AMOUNT; i++)
-                        {
-                            if (bullets[i].IsDestroyed)
-                            {
-                                bullets[i].Position = new Point(player.Position.X - bullets[i].GetWidth/2, player.Position.Y - bullets[i].GetHeight/2);
-                                bullets[i].IsDestroyed = false;
-                                
-                                
-                                direction.Normalize();
-                                
-                                bullets[i].SetDirection = direction;
-                                break;
-                            }
-                        }
+                        this.playerBullet.Fire(player.Position, direction);
                         timeSinceLastFire = 0;
                     }
                    
@@ -227,19 +218,7 @@ namespace GameStateManagement
 
                 timeSinceLastFire += (uint)gameTime.ElapsedGameTime.Milliseconds;
 
-                for (int i = 0; i < BULLET_AMOUNT; i++)
-                {
-                    if(!bullets[i].IsDestroyed)
-                    {
-                        bullets[i].Move(20.0f);
-                        if (bullets[i].Position.X >= camera.ScreenWidth || bullets[i].Position.X <= -bullets[i].GetWidth)
-                            bullets[i].IsDestroyed = true;
-                        else if (bullets[i].Position.Y >= camera.ScreenHeight || bullets[i].Position.Y <= -bullets[i].GetHeight)
-                        {
-                            bullets[i].IsDestroyed = true;
-                        }
-                    }
-                }
+                this.playerBullet.Update();
 
                 if (player.getHealth <= 0) //if players health drops under zero
                 {
@@ -306,11 +285,7 @@ namespace GameStateManagement
             
             player.Draw(spriteBatch, 0, 0, camera);
             theTree.Draw(spriteBatch);
-            for (int i = 0; i < BULLET_AMOUNT; i++)
-            {
-                if (!bullets[i].IsDestroyed)
-                    bullets[i].Draw(spriteBatch);
-            }
+            this.playerBullet.Draw(spriteBatch);
             spriteBatch.End();
 
             UserInterface.Active.Draw(spriteBatch);

@@ -9,8 +9,9 @@ using GeonBit.UI;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using GeonBit.UI.Entities;
+using System.IO;
 
-namespace Game1
+namespace Schlosskirsch
 {
     public class TitleScreen : GameScreen
     {
@@ -29,7 +30,7 @@ namespace Game1
         public override void LoadContent(ContentManager content)
         {
             spriteBatch = ScreenManager.SpriteBatch;
-            titleBackground = content.Load <Texture2D> ("Custom Content/Titlescreen");
+            titleBackground = content.Load <Texture2D> (Path.Combine(Game1.CONTENT_SUBFOLDER,"Titlescreen"));
             textureRectangle = new Rectangle(titleBackground.Width - Game1.ScreenWidth, titleBackground.Height - Game1.ScreenHeight, Game1.ScreenWidth, Game1.ScreenHeight);
             // create a panel and position in center of screen
             panel = new Panel(new Vector2(400, 200), PanelSkin.None, Anchor.Center);

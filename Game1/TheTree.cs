@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
-using SuperG;
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,7 +33,7 @@ namespace Schlosskirsch
 
         public void LoadContent(ContentManager content)
         {
-            treeTexture = content.Load<Texture2D>("Custom Content/TheTree");
+            treeTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "TheTree"));
         }
 
         public void Draw(SpriteBatch spriteBatch)

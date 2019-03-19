@@ -4,7 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace Game1
+namespace Schlosskirsch
 {
     /// <summary>
     /// This is the main type for your game.
@@ -14,7 +14,7 @@ namespace Game1
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         ScreenManager screenManager;
-
+        public const string CONTENT_SUBFOLDER = "CustomContent";
         public const int ScreenWidth = 1280;
         public const int ScreenHeight = 1024;
 
