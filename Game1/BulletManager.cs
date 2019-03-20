@@ -60,6 +60,14 @@ namespace Schlosskirsch
             }
         }
 
+        public void CheckCollision(GameObject collider)
+        {
+            foreach (Bullet b in activeBullets)
+            {
+                collider.CheckCollision(b);
+            }
+        }
+
         public void Fire(Point position, Vector2 direction)
         {
             if(destroyedBullets.Any())

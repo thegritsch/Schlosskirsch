@@ -41,6 +41,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BasicDrone.cs" />
     <Compile Include="Bullet.cs" />
     <Compile Include="BulletManager.cs" />
     <Compile Include="Camera.cs" />
@@ -75,6 +76,7 @@
   <ItemGroup>
     <Content Include="Content\CustomContent\Bullet.png" />
     <Content Include="Content\CustomContent\Field.png" />
+    <Content Include="Content\CustomContent\tfwnogf.jpg" />
     <Content Include="Content\GeonBit.UI\themes\editor\effects\disabled.fx" />
     <Content Include="Content\GeonBit.UI\themes\editor\effects\silhouette.fx" />
     <Content Include="Content\GeonBit.UI\themes\editor\styles\Button-Default.xml" />

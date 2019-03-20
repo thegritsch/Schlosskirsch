@@ -67,6 +67,7 @@ namespace GameStateManagement
         private Rectangle viewPortRectangle;
         private Rectangle textureRectangle;
         private BulletManager<Bullet> playerBullet;
+        private List<BasicDrone> drones;
         #endregion Fields
 
         #region Initialization
@@ -92,6 +93,7 @@ namespace GameStateManagement
             UserInterface.Active.AddEntity(playerHealthBar);
             UserInterface.Active.AddEntity(treeHealthBar);
             this.playerBullet = new BulletManager<Bullet>(Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
+            drones = new List<BasicDrone>();
         }
 
         /// <summary>
@@ -138,6 +140,13 @@ namespace GameStateManagement
                 bullets[i] = new Bullet(bulletTexture, Point.Zero, 32, 32);
             }
             this.playerBullet.AddBullets(bullets);
+
+            Texture2D droneTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "tfwnogf"));
+            Rectangle bounds = new Rectangle(0, 0, 64, 64);
+            for (int i = 0; i < BULLET_AMOUNT; i++)
+            {
+                drones.Add(new BasicDrone(bounds, droneTexture, new Point((i * 100) % viewPortRectangle.Width, (i * 100) % viewPortRectangle.Height)));
+            }
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
             // it should not try to catch up.
@@ -219,7 +228,15 @@ namespace GameStateManagement
                 timeSinceLastFire += (uint)gameTime.ElapsedGameTime.Milliseconds;
 
                 this.playerBullet.Update();
+                foreach (BasicDrone drone in this.drones)
+                {
+                    this.playerBullet.CheckCollision(drone);
 
+                    if (!drone.IsDestroyed)
+                    {
+                        drone.Update(player, theTree);
+                    }
+                }
                 if (player.getHealth <= 0) //if players health drops under zero
                 {
                    
@@ -286,8 +303,16 @@ namespace GameStateManagement
             player.Draw(spriteBatch, 0, 0, camera);
             theTree.Draw(spriteBatch);
             this.playerBullet.Draw(spriteBatch);
-            spriteBatch.End();
+            
 
+            foreach(BasicDrone drone in this.drones)
+            {
+                if(!drone.IsDestroyed)
+                {
+                    drone.Draw(spriteBatch);
+                }
+            }
+            spriteBatch.End();
             UserInterface.Active.Draw(spriteBatch);
 
             // If the game is transitioning on or off, fade it out to black.

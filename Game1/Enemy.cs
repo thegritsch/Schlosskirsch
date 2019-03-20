@@ -9,32 +9,37 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Schlosskirsch
 {
+    /// <summary>
+    /// Base enemy class
+    /// </summary>
     public class Enemy : GameObject
     {
-        private Rectangle boundingBox;
-        private int width;
-        private int height;
+        protected Rectangle boundingBox;
+        
+        protected Texture2D texture;
 
-        public Enemy(string Name, int Width, int Height, Point Position) : base(Name, Position)
+        public Enemy(string Name, Rectangle boundingRectangle, Texture2D texture, Point Position) : base(Name, Position)
         {
-            this.width = Width;
-            this.height = Height;
-            boundingBox = new Rectangle(Position.X, Position.Y, width, height);
+            
+            boundingBox = boundingRectangle;
+            this.texture = texture;
         }
 
         public override bool CheckCollision(GameObject collider)
         {
-            return collider.GetBoundingBox().Intersects(this.boundingBox);
+            return collider.GetBoundingBox().Intersects(this.GetBoundingBox());
         }
 
         public override Rectangle GetBoundingBox()
         {
+            this.boundingBox.Location = this.position;
+            
             return this.boundingBox;
         }
 
-        public virtual void Update(Player player)
+        public virtual void Update(Player player, GameObject objective)
         {
-            //
+            
         }
 
         public virtual void Draw(SpriteBatch spriteBatch)

@@ -62,6 +62,18 @@
 /processorParam:TextureFormat=Color
 /build:CustomContent/smiley_sprite.png
 
+#begin CustomContent/tfwnogf.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:CustomContent/tfwnogf.jpg
+
 #begin CustomContent/TheTree.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -4852,16 +4864,4 @@
 /importer:XmlImporter
 /processor:PassThroughProcessor
 /build:GeonBit.UI\themes\lowres\ThemeData.xml
-
-#begin tfwnogf.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:tfwnogf.jpg
 
