@@ -10,7 +10,7 @@
 
 #-------------------------------- References --------------------------------#
 
-/reference:..\..\packages\GeonBit.UI.3.3.0\lib\geonbitui\DataTypes.dll
+/reference:..\..\packages\GeonBit.UI.3.4.0.1\lib\geonbitui\DataTypes.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -38,6 +38,30 @@
 /processorParam:TextureFormat=Color
 /build:CustomContent/Bullet.png
 
+#begin CustomContent/cube.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:CustomContent/cube.png
+
+#begin CustomContent/Data-Matrix-Code.jpg
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:CustomContent/Data-Matrix-Code.jpg
+
 #begin CustomContent/Field.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -50,6 +74,30 @@
 /processorParam:TextureFormat=Color
 /build:CustomContent/Field.png
 
+#begin CustomContent/ivii_logo_transparent.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=True
+/processorParam:TextureFormat=Color
+/build:CustomContent/ivii_logo_transparent.png
+
+#begin CustomContent/mvBCX1.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:CustomContent/mvBCX1.png
+
 #begin CustomContent/smiley_sprite.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -61,18 +109,6 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:CustomContent/smiley_sprite.png
-
-#begin CustomContent/tfwnogf.jpg
-/importer:TextureImporter
-/processor:TextureProcessor
-/processorParam:ColorKeyColor=255,0,255,255
-/processorParam:ColorKeyEnabled=True
-/processorParam:GenerateMipmaps=False
-/processorParam:PremultiplyAlpha=True
-/processorParam:ResizeToPowerOfTwo=False
-/processorParam:MakeSquare=False
-/processorParam:TextureFormat=Color
-/build:CustomContent/tfwnogf.jpg
 
 #begin CustomContent/TheTree.png
 /importer:TextureImporter

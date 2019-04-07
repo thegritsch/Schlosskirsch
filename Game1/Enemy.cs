@@ -25,8 +25,10 @@ namespace Schlosskirsch
             this.texture = texture;
         }
 
-        public override bool CheckCollision(GameObject collider)
+        public override bool CheckCollision(GameObject collider, GameTime gameTime)
         {
+            if (this.Equals(collider))
+                return false;
             return collider.GetBoundingBox().Intersects(this.GetBoundingBox());
         }
 
@@ -37,7 +39,7 @@ namespace Schlosskirsch
             return this.boundingBox;
         }
 
-        public virtual void Update(Player player, GameObject objective)
+        public virtual void Update(Player player, GameObject objective, List<GameObject> gameObjects, GameTime gameTime)
         {
             
         }

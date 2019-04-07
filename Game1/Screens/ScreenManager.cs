@@ -97,6 +97,8 @@ namespace GameStateManagement
             // we must set EnabledGestures before we can query for them, but
             // we don't assume the game wants to read them.
             LoadContent();
+            blankTexture = new Texture2D(GraphicsDevice, 1, 1);
+            blankTexture.SetData<Color>(new Color[] { Color.Black });
             TouchPanel.EnabledGestures = GestureType.None;
         }
 
@@ -307,9 +309,9 @@ namespace GameStateManagement
 
             spriteBatch.Begin();
 
-            //spriteBatch.Draw(blankTexture,
-                             //new Rectangle(0, 0, viewport.Width, viewport.Height),
-                             //Color.Black * alpha);
+            spriteBatch.Draw(blankTexture,
+                             new Rectangle(0, 0, viewport.Width, viewport.Height),
+                             Color.Black * alpha);
 
             spriteBatch.End();
         }

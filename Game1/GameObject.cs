@@ -23,7 +23,7 @@ namespace Schlosskirsch
 
         public string Name { get; }
 
-        public abstract bool CheckCollision(GameObject collider);
+        public abstract bool CheckCollision(GameObject collider, GameTime gameTime);
 
         public abstract Rectangle GetBoundingBox();
 

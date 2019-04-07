@@ -70,7 +70,7 @@ namespace Schlosskirsch
             spriteBatch.Draw(Bullet.bulletTexture, destRectangle, Color.White);
         }
 
-        public override bool CheckCollision(GameObject collider)
+        public override bool CheckCollision(GameObject collider, GameTime gameTime)
         {
             return GetBoundingBox().Intersects(collider.GetBoundingBox());
         }

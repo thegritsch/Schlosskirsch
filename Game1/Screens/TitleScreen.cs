@@ -17,6 +17,7 @@ namespace Schlosskirsch
     {
         SpriteBatch spriteBatch;
         Texture2D titleBackground;
+        Texture2D headerText;
         Panel panel;
         private Rectangle viewPortRectangle;
         private Rectangle textureRectangle;
@@ -31,16 +32,19 @@ namespace Schlosskirsch
         {
             spriteBatch = ScreenManager.SpriteBatch;
             titleBackground = content.Load <Texture2D> (Path.Combine(Game1.CONTENT_SUBFOLDER,"Titlescreen"));
+            headerText = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "ivii_logo_transparent"));
             textureRectangle = new Rectangle(titleBackground.Width - Game1.ScreenWidth, titleBackground.Height - Game1.ScreenHeight, Game1.ScreenWidth, Game1.ScreenHeight);
             // create a panel and position in center of screen
-            panel = new Panel(new Vector2(400, 200), PanelSkin.None, Anchor.Center);
+            panel = new Panel(new Vector2(Game1.ScreenWidth, Game1.ScreenHeight), PanelSkin.None, Anchor.Center);
             UserInterface.Active.AddEntity(panel);
 
+            Image img = new Image(texture: headerText, size: new Vector2(headerText.Width, headerText.Height), drawMode: ImageDrawMode.Stretch, anchor: Anchor.TopCenter, offset: new Vector2(0, 0));
             // add title and text
-            panel.AddChild(new Header("Schloss Kirsch"));
-            panel.AddChild(new HorizontalLine());
+            panel.AddChild(img);
+            panel.AddChild(new Header("In Wonderland"));
+            
 
-            Button startButton = new Button("Start", ButtonSkin.Default, Anchor.BottomCenter);
+            Button startButton = new Button("Start", ButtonSkin.Default, Anchor.Center, new Vector2(400, 50));
             startButton.OnClick = new EventCallback(ButtonClick);
             // add a button at the bottom
             panel.AddChild(startButton);
@@ -63,6 +67,7 @@ namespace Schlosskirsch
         {
             spriteBatch.Begin();
             spriteBatch.Draw(titleBackground, viewPortRectangle, textureRectangle, Color.White);
+            
             spriteBatch.End();
 
             UserInterface.Active.Draw(spriteBatch);

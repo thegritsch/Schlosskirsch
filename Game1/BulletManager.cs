@@ -60,11 +60,11 @@ namespace Schlosskirsch
             }
         }
 
-        public void CheckCollision(GameObject collider)
+        public void CheckCollision(GameObject collider, GameTime gameTime)
         {
             foreach (Bullet b in activeBullets)
             {
-                collider.CheckCollision(b);
+                collider.CheckCollision(b, gameTime);
             }
         }
 

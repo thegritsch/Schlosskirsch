@@ -21,6 +21,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
+using Schlosskirsch.Screens;
 
 
 
@@ -37,10 +38,11 @@ namespace GameStateManagement
     {
         const uint FIRE_INTERVAL = 200;
         const short BULLET_AMOUNT = 10;
-        const int treePosX = 500;
-        const int treePosY = 400;
+        const uint RESPAWN_TIME = 400;
+        const int treePosX = 550;
+        const int treePosY = 450;
         #region Fields
-
+        private bool isRespawning = false;
         private ContentManager content;
         private SpriteFont gameFont;
         private SpriteBatch spriteBatch;
@@ -68,6 +70,12 @@ namespace GameStateManagement
         private Rectangle textureRectangle;
         private BulletManager<Bullet> playerBullet;
         private List<BasicDrone> drones;
+        private List<Point> spawnPoints;
+        Texture2D droneTexture;
+        Rectangle droneBounds;
+        private Header scoreHeader;
+        private uint respawnTimer;
+        int score = 0;
         #endregion Fields
 
         #region Initialization
@@ -77,23 +85,27 @@ namespace GameStateManagement
         /// </summary>
         public GameplayScreen()
         {
-            TransitionOnTime = TimeSpan.FromSeconds(1.5);
+            TransitionOnTime = TimeSpan.FromSeconds(1);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             ControllingPlayer = PlayerIndex.One;
             gameObjects = new List<GameObject>();
             bullets = new Bullet[BULLET_AMOUNT];
             timeSinceLastFire = FIRE_INTERVAL;
-            playerHealthBar = new ProgressBar(0, 10, new Vector2(200.0f, 20.0f), Anchor.TopLeft);
+            playerHealthBar = new ProgressBar(0, 100, new Vector2(300.0f, 50.0f), Anchor.TopLeft);
             playerHealthBar.Locked = true;
-            playerHealthBar.Value = 10;
-            treeHealthBar = new ProgressBar(0, 10, new Vector2(200.0f, 20.0f), Anchor.TopRight);
+            playerHealthBar.Value = 100;
+            treeHealthBar = new ProgressBar(0, 100, new Vector2(300.0f, 50.0f), Anchor.TopRight);
             treeHealthBar.Locked = true;
-            treeHealthBar.Value = 10;
+            treeHealthBar.Value = 100;
             viewPortRectangle = new Rectangle(0, 0, Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
             UserInterface.Active.AddEntity(playerHealthBar);
             UserInterface.Active.AddEntity(treeHealthBar);
+
             this.playerBullet = new BulletManager<Bullet>(Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
             drones = new List<BasicDrone>();
+            spawnPoints = new List<Point>();
+            scoreHeader = new Header("Score: ", Anchor.TopCenter);
+            UserInterface.Active.AddEntity(scoreHeader);
         }
 
         /// <summary>
@@ -103,7 +115,7 @@ namespace GameStateManagement
         {
             
             spriteBatch = ScreenManager.SpriteBatch;
-
+            content = Content;
             //gameFont = Content.Load<SpriteFont>("gamefont");
             
             //enemyTexture = Content.Load<Texture2D>("gerd");
@@ -112,9 +124,17 @@ namespace GameStateManagement
             player.loadPlayerContent(Content);
             player.controllingPlayer = ControllingPlayer;
             player.Position = new Point(900, 500);
-            theTree = new TheTree(256, 256, new Point(treePosX,treePosY));
+            theTree = new TheTree(128, 128, new Point(treePosX,treePosY));
             theTree.LoadContent(Content);
             gameObjects.Add(theTree);
+
+
+            spawnPoints.Add(new Point(50, 500));
+            spawnPoints.Add(new Point(1100, 500));
+            spawnPoints.Add(new Point(600, 50));
+            spawnPoints.Add(new Point(600, 1000));
+            spawnPoints.Add(new Point(50, 50));
+            spawnPoints.Add(new Point(1000, 1000));
 
             if (camera == null)
             {
@@ -133,24 +153,26 @@ namespace GameStateManagement
             acceptingInput = true;
             background = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER , "Field"));
             textureRectangle = new Rectangle(0, 0, Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
-            Texture2D bulletTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Bullet"));
+            Texture2D bulletTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "mvBCX1"));
 
             for (int i = 0; i < BULLET_AMOUNT; i++)
             {
-                bullets[i] = new Bullet(bulletTexture, Point.Zero, 32, 32);
+                bullets[i] = new Bullet(bulletTexture, Point.Zero, 64, 64);
             }
             this.playerBullet.AddBullets(bullets);
 
-            Texture2D droneTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "tfwnogf"));
-            Rectangle bounds = new Rectangle(0, 0, 64, 64);
+            droneTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Data-Matrix-Code"));
+             droneBounds = new Rectangle(0, 0, 64, 64);
             for (int i = 0; i < BULLET_AMOUNT; i++)
             {
-                drones.Add(new BasicDrone(bounds, droneTexture, new Point((i * 100) % viewPortRectangle.Width, (i * 100) % viewPortRectangle.Height)));
+                drones.Add(new BasicDrone(droneBounds, droneTexture, spawnPoints[i % spawnPoints.Count]));
             }
+            gameObjects.AddRange(drones);
+            gameObjects.Add(player);
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
             // it should not try to catch up.
-            //ScreenManager.Game.ResetElapsedTime();
+            ScreenManager.Game.ResetElapsedTime();
         }
 
         /// <summary>
@@ -158,7 +180,9 @@ namespace GameStateManagement
         /// </summary>
         public override void UnloadContent()
         {
-            content.Unload();
+            UserInterface.Active.RemoveEntity(this.playerHealthBar);
+            UserInterface.Active.RemoveEntity(this.treeHealthBar);
+            UserInterface.Active.RemoveEntity(this.scoreHeader);
         }
 
         #endregion Initialization
@@ -181,7 +205,7 @@ namespace GameStateManagement
             else
                 pauseAlpha = Math.Max(pauseAlpha - 1f / 32, 0);
 
-            if (IsActive)
+            if (IsActive && ScreenState == ScreenState.Active)
             {
                 
 
@@ -207,7 +231,7 @@ namespace GameStateManagement
                     camera.update(new Vector2(0, playerScreenPos.Y - (camera.ScreenHeight - 200)));
                 }
 
-                player.Update(gameTime);
+                player.Update(gameTime, gameObjects);
 
                 
 
@@ -228,18 +252,53 @@ namespace GameStateManagement
                 timeSinceLastFire += (uint)gameTime.ElapsedGameTime.Milliseconds;
 
                 this.playerBullet.Update();
-                foreach (BasicDrone drone in this.drones)
+                for(int i = 0; i < drones.Count; i++)
                 {
-                    this.playerBullet.CheckCollision(drone);
-
-                    if (!drone.IsDestroyed)
+                    BasicDrone d = drones[i];
+                    this.playerBullet.CheckCollision(d, gameTime);
+                    
+                    
+                    
+                    if (!d.IsDestroyed)
                     {
-                        drone.Update(player, theTree);
+                        
+                        d.Update(player, theTree, gameObjects, gameTime);
+                    }
+                    else
+                    {
+                        gameObjects.Remove(d);
+                        drones.RemoveAt(i);
+                        score++;
+                        scoreHeader.Text = "Score: " + score.ToString();
                     }
                 }
-                if (player.getHealth <= 0) //if players health drops under zero
+
+                if(drones.Count == 0)
                 {
-                   
+                    isRespawning = true;
+                }
+
+                if(isRespawning)
+                {
+                    respawnTimer += (uint)gameTime.ElapsedGameTime.Milliseconds;
+                    if (respawnTimer >= RESPAWN_TIME)
+                    {
+                        
+                        BasicDrone d = new BasicDrone(droneBounds, droneTexture, spawnPoints[(int)gameTime.TotalGameTime.Milliseconds % spawnPoints.Count]);
+                        drones.Add(d);
+                        gameObjects.Add(d);
+                        respawnTimer = 0;
+                        if (drones.Count == BULLET_AMOUNT)
+                            isRespawning = false;
+                    }
+                }
+                theTree.Update(gameTime);
+                this.playerHealthBar.Value = player.getHealth;
+                this.treeHealthBar.Value = theTree.Health;
+                if (player.getHealth <= 0 || theTree.Health <= 0) 
+                {
+                    ScreenManager.AddScreen(new GameOverScreen(score), new PlayerIndex());
+                    this.ExitScreen();
                 }
             }
         }
@@ -274,7 +333,7 @@ namespace GameStateManagement
             else if (acceptingInput)
             {
                 
-                  player.Move(input, keyboardState, camera, gameObjects);
+                  player.Move(input, keyboardState, camera);
                 
             }
         }
