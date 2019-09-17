@@ -35,8 +35,10 @@ namespace GameStateManagement
         public readonly GamePadState[] LastGamePadStates;
 
         public readonly bool[] GamePadWasConnected;
+        public readonly bool[] GamePadConnected;
 
         public TouchCollection TouchState;
+        public MouseState MouseState;
 
         public readonly List<GestureSample> Gestures = new List<GestureSample>();
 
@@ -57,6 +59,7 @@ namespace GameStateManagement
             LastGamePadStates = new GamePadState[MaxInputs];
 
             GamePadWasConnected = new bool[MaxInputs];
+            GamePadConnected = new bool[MaxInputs];
         }
 
 
@@ -80,13 +83,21 @@ namespace GameStateManagement
 
                 // Keep track of whether a gamepad has ever been
                 // connected, so we can detect if it is unplugged.
-                if (CurrentGamePadStates[i].IsConnected)
+                if (GamePadWasConnected[i])
                 {
-                    GamePadWasConnected[i] = true;
+                    GamePadConnected[i] = CurrentGamePadStates[i].IsConnected;
+                }
+                else
+                {
+                    if (CurrentGamePadStates[i].IsConnected)
+                    {
+                        GamePadWasConnected[i] |= true;
+                    }
                 }
             }
 
             TouchState = TouchPanel.GetState();
+            MouseState = Mouse.GetState();
 
             Gestures.Clear();
             while (TouchPanel.IsGestureAvailable)

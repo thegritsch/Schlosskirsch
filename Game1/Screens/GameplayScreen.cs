@@ -22,6 +22,12 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System.IO;
 using Schlosskirsch.Screens;
+using Schlosskirsch.Objects;
+using Schlosskirsch.Objects.Enemies;
+using Schlosskirsch.Objects.Guards;
+using Schlosskirsch.Objects.Players;
+using Schlosskirsch.Objects.Weapons;
+using System.Linq;
 
 
 
@@ -36,46 +42,37 @@ namespace GameStateManagement
     /// </summary>
     internal class GameplayScreen : GameScreen
     {
-        const uint FIRE_INTERVAL = 200;
-        const short BULLET_AMOUNT = 10;
+        const short ENEMY_AMOUNT = 10;
         const uint RESPAWN_TIME = 400;
-        const int treePosX = 550;
-        const int treePosY = 450;
+
         #region Fields
+
         private bool isRespawning = false;
-        private ContentManager content;
-        private SpriteFont gameFont;
+
         private SpriteBatch spriteBatch;
+
         private Texture2D background;
+        private Texture2D droneTexture;
+
         private Vector2 enemyPosition = new Vector2(10, 10);
 
         private Camera camera;
         private float pauseAlpha;
         private Player player;
-        private Texture2D playerTexture;
-        private Texture2D enemyTexture;
-        private Vector2 playerScreenPos;
-        private  uint timeSinceLastFire = 0;
         
         private Point[] affected = new Point[4];
         private Rectangle lifeBarRectangle;
         private Texture2D lifeBarTexture;
-        private TheTree theTree;
-        private bool acceptingInput;
-        private List<GameObject> gameObjects;
-        private Bullet[] bullets;
+        private Home home;
+        private readonly List<GameObject> gameObjects = new List<GameObject>();
         private ProgressBar playerHealthBar;
         private ProgressBar treeHealthBar;
-        private Rectangle viewPortRectangle;
-        private Rectangle textureRectangle;
-        private BulletManager<Bullet> playerBullet;
-        private List<BasicDrone> drones;
+        private List<Enemy> enemies;
         private List<Point> spawnPoints;
-        Texture2D droneTexture;
-        Rectangle droneBounds;
         private Header scoreHeader;
         private uint respawnTimer;
-        int score = 0;
+        private int score = 0;
+
         #endregion Fields
 
         #region Initialization
@@ -88,22 +85,20 @@ namespace GameStateManagement
             TransitionOnTime = TimeSpan.FromSeconds(1);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             ControllingPlayer = PlayerIndex.One;
-            gameObjects = new List<GameObject>();
-            bullets = new Bullet[BULLET_AMOUNT];
-            timeSinceLastFire = FIRE_INTERVAL;
+
             playerHealthBar = new ProgressBar(0, 100, new Vector2(300.0f, 50.0f), Anchor.TopLeft);
             playerHealthBar.Locked = true;
             playerHealthBar.Value = 100;
             treeHealthBar = new ProgressBar(0, 100, new Vector2(300.0f, 50.0f), Anchor.TopRight);
             treeHealthBar.Locked = true;
             treeHealthBar.Value = 100;
-            viewPortRectangle = new Rectangle(0, 0, Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
+            
             UserInterface.Active.AddEntity(playerHealthBar);
             UserInterface.Active.AddEntity(treeHealthBar);
 
-            this.playerBullet = new BulletManager<Bullet>(Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
-            drones = new List<BasicDrone>();
+            enemies = new List<Enemy>();
             spawnPoints = new List<Point>();
+
             scoreHeader = new Header("Score: ", Anchor.TopCenter);
             UserInterface.Active.AddEntity(scoreHeader);
         }
@@ -111,23 +106,21 @@ namespace GameStateManagement
         /// <summary>
         /// Load graphics content for the game.
         /// </summary>
-        public override void LoadContent(ContentManager Content)
+        public override void LoadContent(ContentManager content)
         {
-            
-            spriteBatch = ScreenManager.SpriteBatch;
-            content = Content;
-            //gameFont = Content.Load<SpriteFont>("gamefont");
-            
-            //enemyTexture = Content.Load<Texture2D>("gerd");
+            this.spriteBatch = ScreenManager.SpriteBatch;
 
-            player = new Player(playerTexture, 64, 64);
-            player.loadPlayerContent(Content);
-            player.controllingPlayer = ControllingPlayer;
-            player.Position = new Point(900, 500);
-            theTree = new TheTree(128, 128, new Point(treePosX,treePosY));
-            theTree.LoadContent(Content);
-            gameObjects.Add(theTree);
+            this.background = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Field"));
+            this.droneTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Data-Matrix-Code"));
 
+            Texture2D playerTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "smiley_sprite"));
+            Texture2D towerTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "cube"));
+            Texture2D bulletTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "mvBCX1"));
+
+            this.player = new Smily(playerTexture, new Point(900, 500), new Gun(bulletTexture));
+            this.gameObjects.Add(player);
+            this.home = new Home(towerTexture, new Point(550, 450));
+            this.gameObjects.Add(home);
 
             spawnPoints.Add(new Point(50, 500));
             spawnPoints.Add(new Point(1100, 500));
@@ -146,29 +139,16 @@ namespace GameStateManagement
 
 
             //Load tiletextures for the specified tilelayer
-
-            lifeBarRectangle = new Rectangle(3, 3, player.getHealth, 40);
+            lifeBarRectangle = new Rectangle(3, 3, player.Health, 40);
             lifeBarTexture = new Texture2D(ScreenManager.GraphicsDevice, 1, 1);
             lifeBarTexture.SetData<Color>(new Color[] { Color.White });
-            acceptingInput = true;
-            background = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER , "Field"));
-            textureRectangle = new Rectangle(0, 0, Schlosskirsch.Game1.ScreenWidth, Schlosskirsch.Game1.ScreenHeight);
-            Texture2D bulletTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "mvBCX1"));
-
-            for (int i = 0; i < BULLET_AMOUNT; i++)
+            
+            for (int i = 0; i < ENEMY_AMOUNT; i++)
             {
-                bullets[i] = new Bullet(bulletTexture, Point.Zero, 64, 64);
+                enemies.Add(new BasicDrone(droneTexture, spawnPoints[i % spawnPoints.Count]));
             }
-            this.playerBullet.AddBullets(bullets);
-
-            droneTexture = Content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Data-Matrix-Code"));
-             droneBounds = new Rectangle(0, 0, 64, 64);
-            for (int i = 0; i < BULLET_AMOUNT; i++)
-            {
-                drones.Add(new BasicDrone(droneBounds, droneTexture, spawnPoints[i % spawnPoints.Count]));
-            }
-            gameObjects.AddRange(drones);
-            gameObjects.Add(player);
+            gameObjects.AddRange(enemies);
+            
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
             // it should not try to catch up.
@@ -197,6 +177,7 @@ namespace GameStateManagement
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             base.Update(gameTime, otherScreenHasFocus, false);
+
             UserInterface.Active.Update(gameTime);
 
             // Gradually fade in or out depending on whether we are covered by the pause screen.
@@ -207,95 +188,71 @@ namespace GameStateManagement
 
             if (IsActive && ScreenState == ScreenState.Active)
             {
-                
+                //playerScreenPos = camera.worldToScreen(player.Location);
 
-                playerScreenPos = camera.worldToScreen(player.Position);
+                //if (playerScreenPos.X < 400)
+                //{
+                //    camera.update(new Vector2(playerScreenPos.X - 400, 0));
+                //}
+                //if (playerScreenPos.X > camera.ScreenWidth - 400)
+                //{
+                //    camera.update(new Vector2(playerScreenPos.X - (camera.ScreenWidth - 400), 0));
+                //}
+                //if (playerScreenPos.Y < 200)
+                //{
+                //    camera.update(new Vector2(0, playerScreenPos.Y - 200));
+                //}
+                //if (playerScreenPos.Y > camera.ScreenHeight - 200)
+                //{
+                //    camera.update(new Vector2(0, playerScreenPos.Y - (camera.ScreenHeight - 200)));
+                //}
 
-                if (playerScreenPos.X < 400)
+                foreach (HealthObject healthObject in this.gameObjects.OfType<HealthObject>())
                 {
-                    camera.update(new Vector2(playerScreenPos.X - 400, 0));
+                    healthObject.Update(gameTime, this.gameObjects);
                 }
 
-                if (playerScreenPos.X > camera.ScreenWidth - 400)
+                Enemy[] enemies = this.gameObjects.OfType<Enemy>().ToArray();
+                for (int index = 0; index < enemies.Length; index++)
                 {
-                    camera.update(new Vector2(playerScreenPos.X - (camera.ScreenWidth - 400), 0));
-                }
+                    Enemy enemy = enemies[index];
 
-                if (playerScreenPos.Y < 200)
-                {
-                    camera.update(new Vector2(0, playerScreenPos.Y - 200));
-                }
-
-                if (playerScreenPos.Y > camera.ScreenHeight - 200)
-                {
-                    camera.update(new Vector2(0, playerScreenPos.Y - (camera.ScreenHeight - 200)));
-                }
-
-                player.Update(gameTime, gameObjects);
-
-                
-
-                MouseState mouseState = Mouse.GetState();
-                Vector2 direction = (mouseState.Position - player.Position).ToVector2();
-                player.Rotation = (float)Math.Atan2(direction.Y, direction.X);
-
-                if (mouseState.LeftButton == ButtonState.Pressed)
-                {
-                    if (timeSinceLastFire >= FIRE_INTERVAL)
+                    if (enemy.IsDestroyed)
                     {
-                        this.playerBullet.Fire(player.Position, direction);
-                        timeSinceLastFire = 0;
-                    }
-                   
-                }
+                        this.gameObjects.Remove(enemy);
 
-                timeSinceLastFire += (uint)gameTime.ElapsedGameTime.Milliseconds;
-
-                this.playerBullet.Update();
-                for(int i = 0; i < drones.Count; i++)
-                {
-                    BasicDrone d = drones[i];
-                    this.playerBullet.CheckCollision(d, gameTime);
-                    
-                    
-                    
-                    if (!d.IsDestroyed)
-                    {
-                        
-                        d.Update(player, theTree, gameObjects, gameTime);
-                    }
-                    else
-                    {
-                        gameObjects.Remove(d);
-                        drones.RemoveAt(i);
                         score++;
                         scoreHeader.Text = "Score: " + score.ToString();
                     }
+                    else
+                    {
+                        enemy.Update(this.gameObjects, gameTime);
+                    }
                 }
 
-                if(drones.Count == 0)
+                if (enemies.Length == 0)
                 {
                     isRespawning = true;
                 }
 
-                if(isRespawning)
+                if (isRespawning)
                 {
-                    respawnTimer += (uint)gameTime.ElapsedGameTime.Milliseconds;
+                    respawnTimer += (uint)gameTime.ElapsedGameTime.TotalMilliseconds;
                     if (respawnTimer >= RESPAWN_TIME)
                     {
                         
-                        BasicDrone d = new BasicDrone(droneBounds, droneTexture, spawnPoints[(int)gameTime.TotalGameTime.Milliseconds % spawnPoints.Count]);
-                        drones.Add(d);
-                        gameObjects.Add(d);
+                        BasicDrone d = new BasicDrone(droneTexture, spawnPoints[(int)gameTime.TotalGameTime.TotalMilliseconds % spawnPoints.Count]);
+                        this.gameObjects.Add(d);
                         respawnTimer = 0;
-                        if (drones.Count == BULLET_AMOUNT)
+                        if (enemies.Length == ENEMY_AMOUNT)
                             isRespawning = false;
                     }
                 }
-                theTree.Update(gameTime);
-                this.playerHealthBar.Value = player.getHealth;
-                this.treeHealthBar.Value = theTree.Health;
-                if (player.getHealth <= 0 || theTree.Health <= 0) 
+
+                this.playerHealthBar.Value = player.Health;
+                this.treeHealthBar.Value = home.Health;
+
+                if (player.Health <= 0 || home.Health <= 0) 
                 {
                     ScreenManager.AddScreen(new GameOverScreen(score), new PlayerIndex());
                     this.ExitScreen();
@@ -309,32 +266,22 @@ namespace GameStateManagement
         /// </summary>
         public override void HandleInput(InputState input)
         {
-            if (input == null)
-                throw new ArgumentNullException("input");
+            if (input == null) throw new ArgumentNullException(nameof(input));
 
             // Look up inputs for the active player profile.
-            int playerIndex = (int)ControllingPlayer.Value;
-           
-            KeyboardState keyboardState = input.CurrentKeyboardStates[playerIndex];
-
-            //GamePadState gamePadState = input.CurrentGamePadStates[playerIndex];
+            int playerIndex = (int)this.ControllingPlayer.Value;
 
             // The game pauses either if the user presses the pause button, or if
             // they unplug the active gamepad. This requires us to keep track of
             // whether a gamepad was ever plugged in, because we don't want to pause
             // on PC if they are playing with a keyboard and have no gamepad at all!
-            //bool gamePadDisconnected = !gamePadState.IsConnected &&
-            //input.GamePadWasConnected[playerIndex];
-
-            if (input.IsPauseGame(ControllingPlayer))
+            if (input.IsPauseGame(ControllingPlayer) || (input.GamePadWasConnected[playerIndex] && !input.GamePadConnected[playerIndex]))
             {
                 //ScreenManager.AddScreen(new PauseMenuScreen(), ControllingPlayer);
             }
-            else if (acceptingInput)
+            else
             {
-                
-                  player.Move(input, keyboardState, camera);
-                
+                player.HandleInput(input, playerIndex);
             }
         }
 
@@ -343,35 +290,22 @@ namespace GameStateManagement
         /// </summary>
         public override void Draw(GameTime gameTime)
         {
-            // This game has a blue background. Why? Because!
-            ScreenManager.GraphicsDevice.Clear(ClearOptions.Target,
-                                               Color.Black, 0, 0);
+            ScreenManager.GraphicsDevice.Clear(ClearOptions.Target, Color.Black, 0, 0);
 
-            // Our player and enemy are both actually just text strings.
+            this.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+            this.spriteBatch.Draw(background, new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight), Color.White);
 
-            //position data for debugging
-
-            lifeBarRectangle.Width = player.getHealth;
-
-            spriteBatch.Draw(lifeBarTexture, lifeBarRectangle, Color.Green);
-            //spriteBatch.DrawString(gameFont, player.getHealth + "/100", enemyPosition, Color.White, 0.0f, Vector2.Zero, 1.0f, SpriteEffects.None, 0.0f);
-            spriteBatch.Draw(background, viewPortRectangle, null, Color.White);
+            this.lifeBarRectangle.Width = this.player.Health;
+            this.spriteBatch.Draw(this.lifeBarTexture, this.lifeBarRectangle, Color.Green);
             
-            player.Draw(spriteBatch, 0, 0, camera);
-            theTree.Draw(spriteBatch);
-            this.playerBullet.Draw(spriteBatch);
-            
-
-            foreach(BasicDrone drone in this.drones)
+            foreach (GameObject gameObject in this.gameObjects)
             {
-                if(!drone.IsDestroyed)
-                {
-                    drone.Draw(spriteBatch);
-                }
+                gameObject.Draw(this.spriteBatch);
             }
-            spriteBatch.End();
+
+            this.spriteBatch.End();
+
             UserInterface.Active.Draw(spriteBatch);
 
             // If the game is transitioning on or off, fade it out to black.

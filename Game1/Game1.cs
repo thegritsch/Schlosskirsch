@@ -11,10 +11,14 @@ namespace Schlosskirsch
     /// </summary>
     public class Game1 : Game
     {
+        internal static bool GoodMode { get; } = true;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         ScreenManager screenManager;
+
         public const string CONTENT_SUBFOLDER = "CustomContent";
+
         public const int ScreenWidth = 1280;
         public const int ScreenHeight = 1024;
 
@@ -22,9 +26,9 @@ namespace Schlosskirsch
         {
             graphics = new GraphicsDeviceManager(this);
             
-            
             graphics.PreferredBackBufferWidth = ScreenWidth;
             graphics.PreferredBackBufferHeight = ScreenHeight;
+
             Content.RootDirectory = "Content";
         }
 
