@@ -65,8 +65,8 @@ namespace GameStateManagement
         private readonly List<GameObject> gameObjects = new List<GameObject>();
         private ProgressBar playerHealthBar;
         private ProgressBar treeHealthBar;
-        private List<Enemy> enemies;
         private int enemieCount = 3;
+        private int enemieScore = 15;
         private Header scoreHeader;
         private int score = 0;
 
@@ -92,8 +92,6 @@ namespace GameStateManagement
             
             UserInterface.Active.AddEntity(playerHealthBar);
             UserInterface.Active.AddEntity(treeHealthBar);
-
-            enemies = new List<Enemy>();
 
             scoreHeader = new Header("Score: ", Anchor.TopCenter);
             UserInterface.Active.AddEntity(scoreHeader);
@@ -216,8 +214,14 @@ namespace GameStateManagement
                     {
                         this.gameObjects.Remove(enemy);
 
-                        score++;
-                        scoreHeader.Text = "Score: " + score.ToString();
+                        this.score += 1;
+                        this.scoreHeader.Text = "Score: " + this.score.ToString();
+
+                        if (this.score >= this.enemieScore)
+                        {
+                            this.enemieCount += 1;
+                            this.enemieScore += this.enemieScore;
+                        }
                     }
                     else
                     {
