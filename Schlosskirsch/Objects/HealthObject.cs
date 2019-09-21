@@ -66,7 +66,11 @@ namespace Schlosskirsch.Objects
         public virtual bool Damage(int damage)
         {
             this.UnderAttack = true;
-            this.Health -= damage;
+
+            if (!MainGame.GoodMode)
+            {
+                this.Health -= damage;
+            }
 
             return this.Health <= 0;
         }

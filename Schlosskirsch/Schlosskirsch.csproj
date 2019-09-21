@@ -47,7 +47,7 @@
     <Compile Include="Camera.cs" />
     <Compile Include="Objects\Enemy.cs" />
     <Compile Include="FrameAnimation.cs" />
-    <Compile Include="Game1.cs" />
+    <Compile Include="MainGame.cs" />
     <Compile Include="Objects\GameObject.cs" />
     <Compile Include="Objects\Tower.cs" />
     <Compile Include="Objects\HealthObject.cs" />

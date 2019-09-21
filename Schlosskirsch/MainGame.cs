@@ -9,7 +9,7 @@ namespace Schlosskirsch
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class MainGame : Game
     {
         internal static bool GoodMode { get; } = true;
 
@@ -22,7 +22,7 @@ namespace Schlosskirsch
         public const int ScreenWidth = 1280;
         public const int ScreenHeight = 1024;
 
-        public Game1()
+        public MainGame()
         {
             graphics = new GraphicsDeviceManager(this);
             

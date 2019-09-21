@@ -10,8 +10,8 @@ namespace Schlosskirsch.Objects
 {
     public abstract class Weapon
     {
-        protected int ScreenWidth { get; } = Game1.ScreenWidth;
-        protected int ScreenHeight { get; } = Game1.ScreenHeight;
+        protected int ScreenWidth { get; } = MainGame.ScreenWidth;
+        protected int ScreenHeight { get; } = MainGame.ScreenHeight;
 
         public ushort MagazineSize { get; }
         public abstract ushort MagazineClip { get; }

@@ -24,18 +24,18 @@ namespace Schlosskirsch
 
         public TitleScreen()
         {
-            viewPortRectangle = new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight);
+            viewPortRectangle = new Rectangle(0, 0, MainGame.ScreenWidth, MainGame.ScreenHeight);
             
         }
 
         public override void LoadContent(ContentManager content)
         {
             spriteBatch = ScreenManager.SpriteBatch;
-            titleBackground = content.Load <Texture2D> (Path.Combine(Game1.CONTENT_SUBFOLDER,"Titlescreen"));
-            headerText = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "ivii_logo_transparent"));
-            textureRectangle = new Rectangle(titleBackground.Width - Game1.ScreenWidth, titleBackground.Height - Game1.ScreenHeight, Game1.ScreenWidth, Game1.ScreenHeight);
+            titleBackground = content.Load <Texture2D> (Path.Combine(MainGame.CONTENT_SUBFOLDER,"Titlescreen"));
+            headerText = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "ivii_logo_transparent"));
+            textureRectangle = new Rectangle(titleBackground.Width - MainGame.ScreenWidth, titleBackground.Height - MainGame.ScreenHeight, MainGame.ScreenWidth, MainGame.ScreenHeight);
             // create a panel and position in center of screen
-            panel = new Panel(new Vector2(Game1.ScreenWidth, Game1.ScreenHeight), PanelSkin.None, Anchor.Center);
+            panel = new Panel(new Vector2(MainGame.ScreenWidth, MainGame.ScreenHeight), PanelSkin.None, Anchor.Center);
             UserInterface.Active.AddEntity(panel);
 
             Image img = new Image(texture: headerText, size: new Vector2(headerText.Width, headerText.Height), drawMode: ImageDrawMode.Stretch, anchor: Anchor.TopCenter, offset: new Vector2(0, 0));

@@ -12,8 +12,8 @@ namespace Schlosskirsch.Objects
 
         public string Name { get; }
 
-        protected int ScreenWidth { get; } = Game1.ScreenWidth;
-        protected int ScreenHeight { get; } = Game1.ScreenHeight;
+        protected int ScreenWidth { get; } = MainGame.ScreenWidth;
+        protected int ScreenHeight { get; } = MainGame.ScreenHeight;
 
         protected Texture2D Texture { get; }
 

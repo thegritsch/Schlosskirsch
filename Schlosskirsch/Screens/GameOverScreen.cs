@@ -31,7 +31,7 @@ namespace Schlosskirsch.Screens
             
             
             // create a panel and position in center of screen
-            panel = new Panel(new Vector2(Game1.ScreenWidth, Game1.ScreenHeight), PanelSkin.None, Anchor.Center);
+            panel = new Panel(new Vector2(MainGame.ScreenWidth, MainGame.ScreenHeight), PanelSkin.None, Anchor.Center);
             UserInterface.Active.AddEntity(panel);
 
             Header header = new Header("Game over!", Anchor.TopCenter);

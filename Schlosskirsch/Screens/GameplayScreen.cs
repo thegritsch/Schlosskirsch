@@ -92,12 +92,12 @@ namespace GameStateManagement
         {
             this.spriteBatch = ScreenManager.SpriteBatch;
 
-            this.background = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Field"));
-            this.droneTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "Data-Matrix-Code"));
+            this.background = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Field"));
+            this.droneTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Data-Matrix-Code"));
 
-            Texture2D playerTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "smiley_sprite"));
-            Texture2D towerTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "cube"));
-            Texture2D bulletTexture = content.Load<Texture2D>(Path.Combine(Game1.CONTENT_SUBFOLDER, "mvBCX1"));
+            Texture2D playerTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "smiley_sprite"));
+            Texture2D towerTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "cube"));
+            Texture2D bulletTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "mvBCX1"));
 
             this.player = new Smily(playerTexture, new Point(900, 500), new Gun(bulletTexture));
             this.gameObjects.Add(player);
@@ -135,10 +135,10 @@ namespace GameStateManagement
             switch (GameplayScreen.random.Next(4))
             {
                 default:
-                case 0: return new Point(GameplayScreen.random.Next(-100, Game1.ScreenWidth + 101), -100);
-                case 1: return new Point(-100, GameplayScreen.random.Next(-100, Game1.ScreenHeight + 101));
-                case 2: return new Point(GameplayScreen.random.Next(-100, Game1.ScreenWidth + 101), Game1.ScreenHeight + 100);
-                case 3: return new Point(Game1.ScreenWidth + 100, GameplayScreen.random.Next(-100, Game1.ScreenHeight + 101));
+                case 0: return new Point(GameplayScreen.random.Next(-100, MainGame.ScreenWidth + 101), -100);
+                case 1: return new Point(-100, GameplayScreen.random.Next(-100, MainGame.ScreenHeight + 101));
+                case 2: return new Point(GameplayScreen.random.Next(-100, MainGame.ScreenWidth + 101), MainGame.ScreenHeight + 100);
+                case 3: return new Point(MainGame.ScreenWidth + 100, GameplayScreen.random.Next(-100, MainGame.ScreenHeight + 101));
             }
         }
 
@@ -259,7 +259,7 @@ namespace GameStateManagement
 
             this.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            this.spriteBatch.Draw(background, new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight), Color.White);
+            this.spriteBatch.Draw(background, new Rectangle(0, 0, MainGame.ScreenWidth, MainGame.ScreenHeight), Color.White);
             
             foreach (GameObject gameObject in this.gameObjects)
             {
