@@ -19,7 +19,7 @@ namespace Schlosskirsch.Objects
 
         public Weapon Weapon { get; private set; }
 
-        protected Player(string name, Texture2D texture, Point location, Point size, int maxHealth, float speed, Weapon weapon) 
+        protected Player(string name, Texture2D texture, Point location, Point size, uint maxHealth, float speed, Weapon weapon) 
             : base(name, texture, location, size, maxHealth)  
         {
             this.Speed = speed;
@@ -128,6 +128,8 @@ namespace Schlosskirsch.Objects
         public override void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(this.Texture, new Rectangle(this.Center, this.Size), null, this.Color, this.Rotation, this.Origin, SpriteEffects.None, 0.0f);
+
+            this.DrawHealtBar(spriteBatch);
 
             if (this.Weapon != null)
             {

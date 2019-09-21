@@ -56,17 +56,15 @@ namespace GameStateManagement
 
         private Camera camera;
         private float pauseAlpha;
+
         private Player player;
-        
-        private Point[] affected = new Point[4];
-        private Rectangle lifeBarRectangle;
-        private Texture2D lifeBarTexture;
         private Home home;
+
         private readonly List<GameObject> gameObjects = new List<GameObject>();
-        private ProgressBar playerHealthBar;
-        private ProgressBar treeHealthBar;
+
         private int enemieCount = 3;
         private int enemieScore = 15;
+
         private Header scoreHeader;
         private int score = 0;
 
@@ -82,16 +80,6 @@ namespace GameStateManagement
             TransitionOnTime = TimeSpan.FromSeconds(1);
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             ControllingPlayer = PlayerIndex.One;
-
-            playerHealthBar = new ProgressBar(0, 100, new Vector2(300.0f, 50.0f), Anchor.TopLeft);
-            playerHealthBar.Locked = true;
-            playerHealthBar.Value = 100;
-            treeHealthBar = new ProgressBar(0, 100, new Vector2(300.0f, 50.0f), Anchor.TopRight);
-            treeHealthBar.Locked = true;
-            treeHealthBar.Value = 100;
-            
-            UserInterface.Active.AddEntity(playerHealthBar);
-            UserInterface.Active.AddEntity(treeHealthBar);
 
             scoreHeader = new Header("Score: ", Anchor.TopCenter);
             UserInterface.Active.AddEntity(scoreHeader);
@@ -123,12 +111,6 @@ namespace GameStateManagement
             }
             camera.mapWidthInpx = ScreenManager.GraphicsDevice.Viewport.Width;
             camera.mapHeightInpx = ScreenManager.GraphicsDevice.Viewport.Height;
-
-
-            //Load tiletextures for the specified tilelayer
-            lifeBarRectangle = new Rectangle(3, 3, player.Health, 40);
-            lifeBarTexture = new Texture2D(ScreenManager.GraphicsDevice, 1, 1);
-            lifeBarTexture.SetData<Color>(new Color[] { Color.White });
             
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
@@ -141,8 +123,8 @@ namespace GameStateManagement
         /// </summary>
         public override void UnloadContent()
         {
-            UserInterface.Active.RemoveEntity(this.playerHealthBar);
-            UserInterface.Active.RemoveEntity(this.treeHealthBar);
+            //UserInterface.Active.RemoveEntity(this.playerHealthBar);
+            //UserInterface.Active.RemoveEntity(this.treeHealthBar);
             UserInterface.Active.RemoveEntity(this.scoreHeader);
         }
 
@@ -235,9 +217,6 @@ namespace GameStateManagement
                     this.gameObjects.Add(d);
                 }
 
-                this.playerHealthBar.Value = player.Health;
-                this.treeHealthBar.Value = home.Health;
-
                 if (player.Health <= 0 || home.Health <= 0) 
                 {
                     ScreenManager.AddScreen(new GameOverScreen(score), new PlayerIndex());
@@ -281,9 +260,6 @@ namespace GameStateManagement
             this.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             this.spriteBatch.Draw(background, new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight), Color.White);
-
-            this.lifeBarRectangle.Width = this.player.Health;
-            this.spriteBatch.Draw(this.lifeBarTexture, this.lifeBarRectangle, Color.Green);
             
             foreach (GameObject gameObject in this.gameObjects)
             {

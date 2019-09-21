@@ -10,7 +10,10 @@ namespace Schlosskirsch.Objects
 {
     public abstract class HealthObject : GameObject
     {
-        private readonly int maxHealth;
+        private readonly Texture2D healthBarBackground;
+        private readonly Texture2D healthBarForeground;
+
+        private readonly uint maxHealth;
 
         public bool UnderAttack { get; private set; } = false;
 
@@ -21,12 +24,17 @@ namespace Schlosskirsch.Objects
 
         public override Color Color => this.UnderAttack ? Color.Red : base.Color;
 
-        protected HealthObject(string name, Texture2D texture, Point location, Point size, int maxHealth)
+        protected HealthObject(string name, Texture2D texture, Point location, Point size, uint maxHealth)
             : base(name, texture, location, size)
         {
             this.maxHealth = maxHealth;
 
-            this.Health = this.maxHealth;
+            this.healthBarBackground = new Texture2D(texture.GraphicsDevice, 1, 1);
+            this.healthBarBackground.SetData(new Color[] { Color.White });
+            this.healthBarForeground = new Texture2D(texture.GraphicsDevice, 1, 1);
+            this.healthBarForeground.SetData(new Color[] { Color.White });
+
+            this.Health = (int)this.maxHealth;
             this.HitTime = this.HitSpeed;
         }
 
@@ -68,6 +76,22 @@ namespace Schlosskirsch.Objects
             this.updateHitTime(gameTime);
 
             this.updateCollisions(colliders, gameTime);
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+
+            this.DrawHealtBar(spriteBatch);
+        }
+        protected void DrawHealtBar(SpriteBatch spriteBatch)
+        {
+            Rectangle healthBarBackgroundDestination = new Rectangle(this.Location.X, this.Location.Y - 15, this.Size.X, 10);
+            spriteBatch.Draw(this.healthBarBackground, healthBarBackgroundDestination, Color.Black);
+
+            float size = ((this.Size.X - 2.0F) * this.Health) / this.maxHealth;
+            Rectangle healthBarForegroundDestination = new Rectangle(this.Location.X + 1, this.Location.Y - 14, (int)Math.Round(size), 8);
+            spriteBatch.Draw(this.healthBarForeground, healthBarForegroundDestination, Color.Red);
         }
 
         protected virtual void OnCollision(GameObject collider, GameTime gameTime)

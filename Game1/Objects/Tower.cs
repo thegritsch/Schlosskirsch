@@ -7,7 +7,7 @@ namespace Schlosskirsch.Objects
 {
     public abstract class Tower : HealthObject
     {
-        protected Tower(string name, Texture2D texture, Point location, Point size, int health)
+        protected Tower(string name, Texture2D texture, Point location, Point size, uint health)
             : base(name, texture, location, size, health)
         {
             
