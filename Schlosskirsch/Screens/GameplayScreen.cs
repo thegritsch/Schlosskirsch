@@ -42,25 +42,18 @@ namespace GameStateManagement
     /// </summary>
     internal class GameplayScreen : GameScreen
     {
-        const short ENEMY_AMOUNT = 10;
-        const uint RESPAWN_TIME = 400;
-
         private static Random random = new Random();
 
         #region Fields
 
+        private readonly List<GameObject> gameObjects = new List<GameObject>();
+
         private SpriteBatch spriteBatch;
 
         private Texture2D background;
-        private Texture2D droneTexture;
 
         private Camera camera;
         private float pauseAlpha;
-
-        private Player player;
-        private Home home;
-
-        private readonly List<GameObject> gameObjects = new List<GameObject>();
 
         private int enemieCount = 3;
         private int enemieScore = 15;
@@ -81,8 +74,8 @@ namespace GameStateManagement
             TransitionOffTime = TimeSpan.FromSeconds(0.5);
             ControllingPlayer = PlayerIndex.One;
 
-            scoreHeader = new Header("Score: ", Anchor.TopCenter);
-            UserInterface.Active.AddEntity(scoreHeader);
+            this.scoreHeader = new Header("Score: ", Anchor.TopCenter);
+            UserInterface.Active.AddEntity(this.scoreHeader);
         }
 
         /// <summary>
@@ -93,16 +86,15 @@ namespace GameStateManagement
             this.spriteBatch = ScreenManager.SpriteBatch;
 
             this.background = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Field"));
-            this.droneTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Data-Matrix-Code"));
 
             Texture2D playerTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "smiley_sprite"));
-            Texture2D towerTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "cube"));
             Texture2D bulletTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "mvBCX1"));
+            this.gameObjects.Add(new Smily(playerTexture, new Point(900, 500), new Gun(bulletTexture), PlayerIndex.One));
 
-            this.player = new Smily(playerTexture, new Point(900, 500), new Gun(bulletTexture));
-            this.gameObjects.Add(player);
-            this.home = new Home(towerTexture, new Point(550, 450));
-            this.gameObjects.Add(home);
+            Texture2D towerTexture = content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "cube"));
+            this.gameObjects.Add(new Home(towerTexture, new Point(550, 450)));
+
+            BasicDrone.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Data-Matrix-Code")));
 
             if (camera == null)
             {
@@ -123,8 +115,6 @@ namespace GameStateManagement
         /// </summary>
         public override void UnloadContent()
         {
-            //UserInterface.Active.RemoveEntity(this.playerHealthBar);
-            //UserInterface.Active.RemoveEntity(this.treeHealthBar);
             UserInterface.Active.RemoveEntity(this.scoreHeader);
         }
 
@@ -187,10 +177,10 @@ namespace GameStateManagement
                     healthObject.Update(gameTime, this.gameObjects);
                 }
 
-                Enemy[] enemies = this.gameObjects.OfType<Enemy>().ToArray();
-                for (int index = 0; index < enemies.Length; index++)
+                var enemies = this.gameObjects.OfType<Enemy>();
+                for (int index = 0; index < this.gameObjects.OfType<Enemy>().Count(); index++)
                 {
-                    Enemy enemy = enemies[index];
+                    Enemy enemy = enemies.ElementAt(index);
 
                     if (enemy.IsDestroyed)
                     {
@@ -213,14 +203,16 @@ namespace GameStateManagement
 
                 while (this.gameObjects.OfType<Enemy>().Count() < this.enemieCount)
                 {
-                    BasicDrone d = new BasicDrone(droneTexture, this.getSpawnLocation());
-                    this.gameObjects.Add(d);
+                    this.gameObjects.Add(new BasicDrone(this.getSpawnLocation()));
                 }
 
-                if (player.Health <= 0 || home.Health <= 0) 
+                foreach (HealthObject health in this.gameObjects.OfType<HealthObject>())
                 {
-                    ScreenManager.AddScreen(new GameOverScreen(score), new PlayerIndex());
-                    this.ExitScreen();
+                    if (health.Health <= 0)
+                    {
+                        ScreenManager.AddScreen(new GameOverScreen(score), new PlayerIndex());
+                        this.ExitScreen();
+                    }
                 }
             }
         }
@@ -233,20 +225,12 @@ namespace GameStateManagement
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
-            // Look up inputs for the active player profile.
-            int playerIndex = (int)this.ControllingPlayer.Value;
-
-            // The game pauses either if the user presses the pause button, or if
-            // they unplug the active gamepad. This requires us to keep track of
-            // whether a gamepad was ever plugged in, because we don't want to pause
-            // on PC if they are playing with a keyboard and have no gamepad at all!
-            if (input.IsPauseGame(ControllingPlayer) || (input.GamePadWasConnected[playerIndex] && !input.GamePadConnected[playerIndex]))
+            foreach (Player player in this.gameObjects.OfType<Player>())
             {
-                //ScreenManager.AddScreen(new PauseMenuScreen(), ControllingPlayer);
-            }
-            else
-            {
-                player.HandleInput(input, playerIndex);
+                if (player.HandleInput(input))
+                {
+                    //ScreenManager.AddScreen(new PauseMenuScreen(), ControllingPlayer);
+                }
             }
         }
 
@@ -259,7 +243,7 @@ namespace GameStateManagement
 
             this.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            this.spriteBatch.Draw(background, new Rectangle(0, 0, MainGame.ScreenWidth, MainGame.ScreenHeight), Color.White);
+            this.spriteBatch.Draw(this.background, new Rectangle(0, 0, MainGame.ScreenWidth, MainGame.ScreenHeight), Color.White);
             
             foreach (GameObject gameObject in this.gameObjects)
             {

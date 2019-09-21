@@ -19,12 +19,15 @@ namespace Schlosskirsch.Objects
 
         public Weapon Weapon { get; private set; }
 
-        protected Player(string name, Texture2D texture, Point location, Point size, uint maxHealth, float speed, Weapon weapon) 
+        public PlayerIndex Index { get; }
+
+        protected Player(string name, Texture2D texture, Point location, Point size, uint maxHealth, float speed, Weapon weapon, PlayerIndex index) 
             : base(name, texture, location, size, maxHealth)  
         {
             this.Speed = speed;
 
             this.Weapon = weapon;
+            this.Index = index;
         }
 
         private bool handleMouseInput(MouseState mouse)
@@ -96,11 +99,23 @@ namespace Schlosskirsch.Objects
             }
         }
 
-        public virtual void HandleInput(InputState input, int playerIndex)
+        public virtual bool HandleInput(InputState input)
         {
+            if (input.IsPauseGame(this.Index)) return true;
+
+            int playerIndex = (int)this.Index;
+
+            // The game pauses either if the user presses the pause button, or if
+            // they unplug the active gamepad. This requires us to keep track of
+            // whether a gamepad was ever plugged in, because we don't want to pause
+            // on PC if they are playing with a keyboard and have no gamepad at all!
+            if (input.GamePadWasConnected[playerIndex] && !input.GamePadConnected[playerIndex]) return true;
+
             this.handleMouseInput(input.MouseState);
 
             this.handleKeyboardInput(input.CurrentKeyboardStates[playerIndex]);
+
+            return false;
         }
 
         public virtual void Change(Weapon weapon)

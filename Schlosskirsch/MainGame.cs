@@ -11,7 +11,7 @@ namespace Schlosskirsch
     /// </summary>
     public class MainGame : Game
     {
-        internal static bool GoodMode { get; } = true;
+        internal static bool GoodMode { get; } = false;
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;

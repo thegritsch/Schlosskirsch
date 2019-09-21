@@ -22,8 +22,8 @@ namespace Schlosskirsch.Objects.Players
 
         protected override int HitSpeed => HIT_SPEED;
 
-        public Smily(Texture2D texture, Point location, Weapon weapon)
-            : base(NAME, texture, location, new Point(WIDTH, HEIGHT), MAX_HEALTH, SPEED, weapon)
+        public Smily(Texture2D texture, Point location, Weapon weapon, PlayerIndex index)
+            : base(NAME, texture, location, new Point(WIDTH, HEIGHT), MAX_HEALTH, SPEED, weapon, index)
         {
 
         }

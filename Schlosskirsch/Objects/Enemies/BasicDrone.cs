@@ -15,13 +15,20 @@ namespace Schlosskirsch.Objects.Enemies
         private const int ATTACK_SPEED = 250;
         private const int ATTACK_DAMAGE = 1;
 
+        private static Texture2D texture;
+
         protected override int AttackSpeed => ATTACK_SPEED;
         protected override int AttackDamage => ATTACK_DAMAGE;
 
-        public BasicDrone(Texture2D texture, Point location) 
-            : base(NAME, texture, location, new Point(WIDTH, HEIGHT), SPEED)
+        public BasicDrone(Point location) 
+            : base(NAME, BasicDrone.texture, location, new Point(WIDTH, HEIGHT), SPEED)
         {
             
+        }
+
+        public static void LoadTexture(Texture2D texture)
+        {
+            BasicDrone.texture = texture;
         }
     }
 }
