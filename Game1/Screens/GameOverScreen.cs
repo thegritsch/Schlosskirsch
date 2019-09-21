@@ -18,8 +18,6 @@ namespace Schlosskirsch.Screens
         SpriteBatch spriteBatch;
         
         Panel panel;
-        private Rectangle viewPortRectangle;
-        private Rectangle textureRectangle;
         private int score;
 
         public GameOverScreen(int score)

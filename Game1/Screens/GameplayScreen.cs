@@ -45,16 +45,14 @@ namespace GameStateManagement
         const short ENEMY_AMOUNT = 10;
         const uint RESPAWN_TIME = 400;
 
-        #region Fields
+        private static Random random = new Random();
 
-        private bool isRespawning = false;
+        #region Fields
 
         private SpriteBatch spriteBatch;
 
         private Texture2D background;
         private Texture2D droneTexture;
-
-        private Vector2 enemyPosition = new Vector2(10, 10);
 
         private Camera camera;
         private float pauseAlpha;
@@ -68,9 +66,8 @@ namespace GameStateManagement
         private ProgressBar playerHealthBar;
         private ProgressBar treeHealthBar;
         private List<Enemy> enemies;
-        private List<Point> spawnPoints;
+        private int enemieCount = 3;
         private Header scoreHeader;
-        private uint respawnTimer;
         private int score = 0;
 
         #endregion Fields
@@ -97,7 +94,6 @@ namespace GameStateManagement
             UserInterface.Active.AddEntity(treeHealthBar);
 
             enemies = new List<Enemy>();
-            spawnPoints = new List<Point>();
 
             scoreHeader = new Header("Score: ", Anchor.TopCenter);
             UserInterface.Active.AddEntity(scoreHeader);
@@ -122,13 +118,6 @@ namespace GameStateManagement
             this.home = new Home(towerTexture, new Point(550, 450));
             this.gameObjects.Add(home);
 
-            spawnPoints.Add(new Point(50, 500));
-            spawnPoints.Add(new Point(1100, 500));
-            spawnPoints.Add(new Point(600, 50));
-            spawnPoints.Add(new Point(600, 1000));
-            spawnPoints.Add(new Point(50, 50));
-            spawnPoints.Add(new Point(1000, 1000));
-
             if (camera == null)
             {
                 camera = new Camera(2.0f, ScreenManager.GraphicsDevice.Viewport.Width,
@@ -142,12 +131,6 @@ namespace GameStateManagement
             lifeBarRectangle = new Rectangle(3, 3, player.Health, 40);
             lifeBarTexture = new Texture2D(ScreenManager.GraphicsDevice, 1, 1);
             lifeBarTexture.SetData<Color>(new Color[] { Color.White });
-            
-            for (int i = 0; i < ENEMY_AMOUNT; i++)
-            {
-                enemies.Add(new BasicDrone(droneTexture, spawnPoints[i % spawnPoints.Count]));
-            }
-            gameObjects.AddRange(enemies);
             
             // once the load has finished, we use ResetElapsedTime to tell the game's
             // timing mechanism that we have just finished a very long frame, and that
@@ -166,6 +149,18 @@ namespace GameStateManagement
         }
 
         #endregion Initialization
+
+        private Point getSpawnLocation()
+        {
+            switch (GameplayScreen.random.Next(4))
+            {
+                default:
+                case 0: return new Point(GameplayScreen.random.Next(-100, Game1.ScreenWidth + 101), -100);
+                case 1: return new Point(-100, GameplayScreen.random.Next(-100, Game1.ScreenHeight + 101));
+                case 2: return new Point(GameplayScreen.random.Next(-100, Game1.ScreenWidth + 101), Game1.ScreenHeight + 100);
+                case 3: return new Point(Game1.ScreenWidth + 100, GameplayScreen.random.Next(-100, Game1.ScreenHeight + 101));
+            }
+        }
 
         #region Update and Draw
 
@@ -230,23 +225,10 @@ namespace GameStateManagement
                     }
                 }
 
-                if (enemies.Length == 0)
+                while (this.gameObjects.OfType<Enemy>().Count() < this.enemieCount)
                 {
-                    isRespawning = true;
-                }
-
-                if (isRespawning)
-                {
-                    respawnTimer += (uint)gameTime.ElapsedGameTime.TotalMilliseconds;
-                    if (respawnTimer >= RESPAWN_TIME)
-                    {
-                        
-                        BasicDrone d = new BasicDrone(droneTexture, spawnPoints[(int)gameTime.TotalGameTime.TotalMilliseconds % spawnPoints.Count]);
-                        this.gameObjects.Add(d);
-                        respawnTimer = 0;
-                        if (enemies.Length == ENEMY_AMOUNT)
-                            isRespawning = false;
-                    }
+                    BasicDrone d = new BasicDrone(droneTexture, this.getSpawnLocation());
+                    this.gameObjects.Add(d);
                 }
 
                 this.playerHealthBar.Value = player.Health;
