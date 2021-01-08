@@ -96,6 +96,7 @@ namespace GameStateManagement
             this.gameObjects.Add(new Home(towerTexture, new Point(550, 450)));
 
             BasicDrone.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Data-Matrix-Code")));
+            SmallBugfix.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "bug-128")));
 
             if (camera == null)
             {
@@ -207,6 +208,11 @@ namespace GameStateManagement
                         {
                             this.enemieCount += 1;
                             this.enemieScore += this.enemieScore;
+                        }
+
+                        if (!this.gameObjects.OfType<SmallBugfix>().Any() && this.score % 10 == 0) //TODO: Spawn a single power up at destroyed enemy to regen health in a better way
+                        {
+                            this.gameObjects.Add(new SmallBugfix(enemy.Location));
                         }
                     }
                     else
