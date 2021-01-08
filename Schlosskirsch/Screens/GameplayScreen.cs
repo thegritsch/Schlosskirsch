@@ -26,6 +26,7 @@ using Schlosskirsch.Objects;
 using Schlosskirsch.Objects.Enemies;
 using Schlosskirsch.Objects.Guards;
 using Schlosskirsch.Objects.Players;
+using Schlosskirsch.Objects.PowerUps;
 using Schlosskirsch.Objects.Weapons;
 using System.Linq;
 
@@ -175,6 +176,19 @@ namespace GameStateManagement
                 foreach (HealthObject healthObject in this.gameObjects.OfType<HealthObject>())
                 {
                     healthObject.Update(gameTime, this.gameObjects);
+                }
+
+                var powerUps = this.gameObjects.OfType<PowerUp>().ToList();
+                foreach (PowerUp powerUp in powerUps)
+                {
+                    if (powerUp.IsConsumed)
+                    {
+                        this.gameObjects.Remove(powerUp);
+                    }
+                    else
+                    {
+                        powerUp.Update(gameTime, this.gameObjects);
+                    }
                 }
 
                 var enemies = this.gameObjects.OfType<Enemy>();

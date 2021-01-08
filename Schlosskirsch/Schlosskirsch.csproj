@@ -49,6 +49,7 @@
     <Compile Include="FrameAnimation.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="Objects\GameObject.cs" />
+    <Compile Include="Objects\PowerUp.cs" />
     <Compile Include="Objects\Tower.cs" />
     <Compile Include="Objects\HealthObject.cs" />
     <Compile Include="Objects\Players\Smily.cs" />
