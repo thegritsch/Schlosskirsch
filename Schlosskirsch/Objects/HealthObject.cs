@@ -75,6 +75,21 @@ namespace Schlosskirsch.Objects
             return this.Health <= 0;
         }
 
+        public virtual bool Heal(int amount)
+        {
+            var newHealth = this.Health + amount;
+            if (newHealth > maxHealth)
+            {
+                this.Health = (int)maxHealth;
+            }
+            else
+            {
+                this.Health = newHealth;
+            }
+
+            return true;
+        }
+
         public virtual void Update(GameTime gameTime, List<GameObject> colliders)
         {
             this.updateHitTime(gameTime);

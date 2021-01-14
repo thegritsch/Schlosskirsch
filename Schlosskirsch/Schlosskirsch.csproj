@@ -13,6 +13,7 @@
     <AssemblyName>Game1</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>Windows</MonoGamePlatform>
+    <MonoGameMGCBAdditionalArguments>/define:Test=Yes</MonoGameMGCBAdditionalArguments>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -49,6 +50,8 @@
     <Compile Include="FrameAnimation.cs" />
     <Compile Include="MainGame.cs" />
     <Compile Include="Objects\GameObject.cs" />
+    <Compile Include="Objects\PowerUp.cs" />
+    <Compile Include="Objects\PowerUps\SmallBugfix.cs" />
     <Compile Include="Objects\Tower.cs" />
     <Compile Include="Objects\HealthObject.cs" />
     <Compile Include="Objects\Players\Smily.cs" />
@@ -107,6 +110,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\CustomContent\bug-128.png" />
     <Content Include="Content\CustomContent\Bullet.png" />
     <Content Include="Content\CustomContent\Data-Matrix-Code.jpg" />
     <Content Include="Content\CustomContent\Field.png" />

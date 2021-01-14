@@ -26,6 +26,7 @@ using Schlosskirsch.Objects;
 using Schlosskirsch.Objects.Enemies;
 using Schlosskirsch.Objects.Guards;
 using Schlosskirsch.Objects.Players;
+using Schlosskirsch.Objects.PowerUps;
 using Schlosskirsch.Objects.Weapons;
 using System.Linq;
 
@@ -95,6 +96,7 @@ namespace GameStateManagement
             this.gameObjects.Add(new Home(towerTexture, new Point(550, 450)));
 
             BasicDrone.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Data-Matrix-Code")));
+            SmallBugfix.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "bug-128")));
 
             if (camera == null)
             {
@@ -177,6 +179,19 @@ namespace GameStateManagement
                     healthObject.Update(gameTime, this.gameObjects);
                 }
 
+                var powerUps = this.gameObjects.OfType<PowerUp>().ToList();
+                foreach (PowerUp powerUp in powerUps)
+                {
+                    if (powerUp.IsConsumed)
+                    {
+                        this.gameObjects.Remove(powerUp);
+                    }
+                    else
+                    {
+                        powerUp.Update(gameTime, this.gameObjects);
+                    }
+                }
+
                 var enemies = this.gameObjects.OfType<Enemy>();
                 for (int index = 0; index < this.gameObjects.OfType<Enemy>().Count(); index++)
                 {
@@ -193,6 +208,11 @@ namespace GameStateManagement
                         {
                             this.enemieCount += 1;
                             this.enemieScore += this.enemieScore;
+                        }
+
+                        if (!this.gameObjects.OfType<SmallBugfix>().Any() && this.score % 10 == 0) //TODO: Spawn a single power up at destroyed enemy to regen health in a better way
+                        {
+                            this.gameObjects.Add(new SmallBugfix(enemy.Location));
                         }
                     }
                     else
