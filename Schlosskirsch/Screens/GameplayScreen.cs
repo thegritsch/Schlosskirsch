@@ -96,7 +96,9 @@ namespace GameStateManagement
             this.gameObjects.Add(new Home(towerTexture, new Point(550, 450)));
 
             BasicDrone.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "Data-Matrix-Code")));
+            RegionalDrone.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "St")));
             SmallBugfix.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "bug-128")));
+            PileOfMoney.LoadTexture(content.Load<Texture2D>(Path.Combine(MainGame.CONTENT_SUBFOLDER, "4mio")));
 
             if (camera == null)
             {
@@ -210,9 +212,14 @@ namespace GameStateManagement
                             this.enemieScore += this.enemieScore;
                         }
 
-                        if (!this.gameObjects.OfType<SmallBugfix>().Any() && this.score % 10 == 0) //TODO: Spawn a single power up at destroyed enemy to regen health in a better way
+                        if (!this.gameObjects.OfType<SmallBugfix>().Any() && enemy is BasicDrone && this.score % 10 == 0) //TODO: Spawn a single power up at destroyed enemy to regen health in a better way
                         {
                             this.gameObjects.Add(new SmallBugfix(enemy.Location));
+                        }
+
+                        if (enemy is RegionalDrone)
+                        {
+                            this.gameObjects.Add(new PileOfMoney(enemy.Location));
                         }
                     }
                     else
@@ -224,6 +231,11 @@ namespace GameStateManagement
                 while (this.gameObjects.OfType<Enemy>().Count() < this.enemieCount)
                 {
                     this.gameObjects.Add(new BasicDrone(this.getSpawnLocation()));
+                }
+
+                if (!this.gameObjects.OfType<RegionalDrone>().Any() && this.score % 19 == 0) //TODO: Improve enemy spawning
+                {
+                    this.gameObjects.Add(new RegionalDrone(this.getSpawnLocation()));
                 }
 
                 foreach (HealthObject health in this.gameObjects.OfType<HealthObject>())

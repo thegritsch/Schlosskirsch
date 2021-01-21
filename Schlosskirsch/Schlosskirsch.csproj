@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Objects\Bullets\Simple.cs" />
+    <Compile Include="Objects\Enemies\RegionalDrone.cs" />
     <Compile Include="Objects\Enemies\BasicDrone.cs" />
     <Compile Include="Objects\Bullet.cs" />
     <Compile Include="Camera.cs" />
@@ -51,6 +52,7 @@
     <Compile Include="MainGame.cs" />
     <Compile Include="Objects\GameObject.cs" />
     <Compile Include="Objects\PowerUp.cs" />
+    <Compile Include="Objects\PowerUps\PileOfMoney.cs" />
     <Compile Include="Objects\PowerUps\SmallBugfix.cs" />
     <Compile Include="Objects\Tower.cs" />
     <Compile Include="Objects\HealthObject.cs" />
@@ -110,12 +112,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\CustomContent\4mio.png" />
     <Content Include="Content\CustomContent\bug-128.png" />
     <Content Include="Content\CustomContent\Bullet.png" />
     <Content Include="Content\CustomContent\Data-Matrix-Code.jpg" />
     <Content Include="Content\CustomContent\Field.png" />
     <Content Include="Content\CustomContent\mvBCX1.png" />
     <Content Include="Content\CustomContent\smiley_sprite.png" />
+    <Content Include="Content\CustomContent\st.png" />
     <Content Include="Content\CustomContent\TheTree.png" />
     <Content Include="Content\CustomContent\Titlescreen.png" />
     <Content Include="Content\GeonBit.UI\themes\editor\effects\disabled.fx" />
